@@ -93,30 +93,53 @@ class ModelManager:
     def _load_model_from_huggingface(self, model_path: str, task: str) -> Optional[Any]:
         """Load model from Hugging Face repository"""
         try:
-            # For now, return a mock model structure for demonstration
-            # This will be replaced with actual model loading when transformers is available
-            logger.info(f"Creating demo model placeholder for {model_path} (task: {task})")
-            
-            # Create a demonstration model structure
-            demo_model = {
-                "model_path": model_path,
-                "task": task,
-                "type": "demo",
-                "loaded": True,
-                "capabilities": {
-                    "DTI": "Drug-Target Interaction prediction",
-                    "DTA": "Drug-Target Affinity prediction", 
-                    "DDI": "Drug-Drug Interaction prediction",
-                    "ADMET": "ADMET property prediction",
-                    "Similarity": "Molecular similarity search"
-                }.get(task, "Unknown task")
-            }
-            
-            return demo_model
+            # Check if transformers is available
+            try:
+                import transformers
+                from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
+                import os
+                
+                # Set Hugging Face token if available
+                hf_token = os.getenv('HUGGINGFACE_TOKEN')
+                if hf_token:
+                    os.environ['HF_TOKEN'] = hf_token
+                
+                logger.info(f"Loading actual model from {model_path} for task {task}")
+                
+                # Load tokenizer and model based on task with authentication
+                auth_kwargs = {'token': hf_token} if hf_token else {}
+                
+                tokenizer = AutoTokenizer.from_pretrained(model_path, **auth_kwargs)
+                
+                if task in ['DTI', 'DTA', 'DDI']:
+                    model = AutoModelForSequenceClassification.from_pretrained(model_path, **auth_kwargs)
+                else:
+                    model = AutoModel.from_pretrained(model_path, **auth_kwargs)
+                
+                return {
+                    "model": model,
+                    "tokenizer": tokenizer,
+                    "model_path": model_path,
+                    "task": task,
+                    "type": "huggingface",
+                    "loaded": True
+                }
+                
+            except ImportError as import_error:
+                logger.error(f"transformers library not available: {str(import_error)}")
+                raise Exception("The transformers library is required for model loading. Please install it to enable this functionality.")
+            except Exception as model_error:
+                logger.error(f"Failed to load model from Hugging Face: {str(model_error)}")
+                if "401" in str(model_error) or "authentication" in str(model_error).lower():
+                    raise Exception("Authentication failed. Please check your Hugging Face token.")
+                elif "404" in str(model_error) or "not found" in str(model_error).lower():
+                    raise Exception(f"Model {model_path} not found. Please verify the model name.")
+                else:
+                    raise Exception(f"Model loading failed: {str(model_error)}")
                 
         except Exception as e:
             logger.error(f"Failed to load model from {model_path}: {str(e)}")
-            return None
+            raise e
     
     def load_model(self, task: str, model_name: str, model_config: Dict) -> bool:
         """Load a model for a specific task"""

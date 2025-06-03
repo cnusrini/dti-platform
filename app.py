@@ -107,25 +107,30 @@ def render_sidebar():
                 st.error("✗")
         
         if load_button:
-            with st.sidebar.spinner(f"Loading {selected_model}..."):
-                try:
+            try:
+                with st.sidebar.spinner(f"Loading {selected_model}..."):
                     success = st.session_state.model_manager.load_model(
                         current_task, 
                         selected_model, 
                         available_models[selected_model]
                     )
-                    if success:
-                        st.session_state.loaded_models[model_key] = {
-                            'task': current_task,
-                            'name': selected_model,
-                            'loaded_at': datetime.now()
-                        }
-                        st.sidebar.success(f"{selected_model} loaded successfully!")
-                        st.rerun()
-                    else:
-                        st.sidebar.error(f"Failed to load {selected_model}")
-                except Exception as e:
-                    st.sidebar.error(f"Error loading model: {str(e)}")
+                    
+                if success:
+                    st.session_state.loaded_models[model_key] = {
+                        'task': current_task,
+                        'name': selected_model,
+                        'loaded_at': datetime.now()
+                    }
+                    st.sidebar.success(f"{selected_model} loaded successfully!")
+                    st.rerun()
+                else:
+                    st.sidebar.error(f"Failed to load {selected_model}. The transformers library is required for model loading.")
+                    st.sidebar.info("To enable model loading, please install the transformers package.")
+                    
+            except Exception as e:
+                st.sidebar.error(f"Error loading model: {str(e)}")
+                if "transformers" in str(e).lower():
+                    st.sidebar.info("Model loading requires the transformers library to be installed.")
     else:
         st.sidebar.warning(f"No models available for {current_task}")
     
