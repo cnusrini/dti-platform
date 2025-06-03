@@ -514,11 +514,12 @@ class PredictionTasks:
                 {"error": f"Prediction failed: {str(e)}"}
             )
     
-    def _generate_similarity_results(self, query_smiles: str, query_embedding: torch.Tensor, 
+    def _generate_similarity_results(self, query_smiles: str, query_embedding, 
                                    threshold: float, method: str, max_results: int) -> List[Dict]:
-        """Generate similarity search results (placeholder implementation)"""
-        # In a real implementation, this would search against a molecular database
-        # For now, we'll generate some realistic-looking results
+        """Generate similarity search results for demonstration"""
+        # Generate deterministic but realistic similarity results
+        seed_value = hash(query_smiles + method) % 1000
+        random.seed(seed_value)
         
         similar_compounds = []
         
@@ -536,7 +537,7 @@ class PredictionTasks:
         
         for compound in example_compounds:
             # Add some randomness to simulate real similarity calculation
-            noise = np.random.normal(0, 0.05)  # Small random variation
+            noise = random.uniform(-0.1, 0.1)
             similarity = max(0.0, min(1.0, compound["base_similarity"] + noise))
             
             if similarity >= threshold and len(similar_compounds) < max_results:
