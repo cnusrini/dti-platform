@@ -1,0 +1,143 @@
+# 📄 Business Requirements Document (BRD)
+
+## **Project Title:**
+
+**PharmQAgentAI: Therapeutic Intelligence Platform Powered by Hugging Face Models**
+
+---
+
+## **1. Objective**
+
+To design and deploy a modular AI-driven web application that supports multiple drug discovery and therapeutics prediction tasks by dynamically loading models from Hugging Face. The application will allow users to select models for:
+
+* Drug-Target Interaction (DTI)
+* Drug-Target Binding Affinity (DTA)
+* Drug-Drug Interaction (DDI)
+* ADMET Prediction
+* Molecular Similarity Search
+* De Novo Drug Generation (future)
+
+---
+
+## **2. Supported Therapeutics Tasks**
+
+| Task                              | Description                                                             |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| **DTI (Drug-Target Interaction)** | Predicts interaction probability between a compound and a protein.      |
+| **DTA (Binding Affinity)**        | Predicts IC50/Kd/Ki binding affinity between drug and protein.          |
+| **DDI (Drug-Drug Interaction)**   | Predicts synergistic or adverse interactions between drug pairs.        |
+| **ADMET**                         | Predicts Absorption, Distribution, Metabolism, Excretion, and Toxicity. |
+| **Molecular Similarity**          | Finds similar drugs based on structure or embeddings.                   |
+| **De Novo Drug Design**           | Generates novel molecular structures based on input prompts. (Planned)  |
+
+---
+
+## **3. UI Layout Design**
+
+### 🧭 Sidebar (Left Navigation Panel)
+
+* **Therapeutic Tasks** (accordion or tabs):
+
+  * Drug-Target Interaction (DTI)
+  * Binding Affinity (DTA)
+  * Drug-Drug Interaction (DDI)
+  * ADMET
+  * Similarity Search
+  * (Coming Soon) De Novo Drug Generator
+* **Model Selector**
+
+  * Dropdown of pretrained models from Hugging Face for each task
+  * Load button with status indicator
+* **Settings**
+
+  * Toggle: Smart Mode / Manual
+  * Reset All Models
+
+### 🔝 Top Bar
+
+* Application Name: "PharmQAgentAI"
+* Health Indicator (🟢 / 🔴)
+* Logged-in User (future feature)
+* API Mode: \[Live] or \[Dev]
+
+### 🧪 Main Workspace (Center Panel)
+
+* **Form Inputs** for the selected task:
+
+  * **DTI / DTA**:
+
+    * Drug SMILES input (text or file upload)
+    * Target Sequence input (text)
+  * **DDI**:
+
+    * Drug 1 SMILES
+    * Drug 2 SMILES
+  * **ADMET**:
+
+    * SMILES input
+    * Property selector (e.g., LD50, logP)
+  * **Similarity**:
+
+    * SMILES or compound name
+    * Similarity threshold
+* **Submit Button**
+* **Prediction Output Box**
+
+  * Score
+  * Status badge (Success, Error)
+  * Model Info used for prediction
+* **Optional Tabs Below Output:**
+
+  * Confidence Explanation
+  * Similar Drugs (e.g., Tanimoto index)
+  * External Evidence (BindingDB, ChEMBL)
+
+---
+
+## **4. Non-Functional Requirements**
+
+* Models must be loaded from Hugging Face on demand (no disk persistence).
+* All models should use temporary memory (e.g., Python's `tempfile`).
+* Platform should support Hugging Face `resolve/main` URLs for `config.json` and `.pt` weights.
+* Only one model should be loaded per task to optimize memory.
+
+---
+
+## **5. API Endpoints Overview**
+
+| Route                        | Method | Description                         |
+| ---------------------------- | ------ | ----------------------------------- |
+| `/models/options`            | GET    | List available models by task       |
+| `/models/load/{task}/{name}` | POST   | Load model for task                 |
+| `/predict/dti`               | POST   | Predict DTI                         |
+| `/predict/dta`               | POST   | Predict binding affinity            |
+| `/predict/ddi`               | POST   | Predict drug-drug interaction       |
+| `/predict/admet`             | POST   | Predict ADMET properties            |
+| `/predict/similarity`        | POST   | Perform structure similarity search |
+
+---
+
+## **6. Future Enhancements**
+
+* User login & workspace management
+* Upload datasets for batch processing
+* Export results to CSV or PDF
+* 3D visualization of molecules (via RDKit or Py3Dmol)
+* Fine-tune on custom datasets via Hugging Face Spaces
+
+---
+
+## **7. Deployment Considerations**
+
+* Support both local and cloud deployment
+* Frontend in Streamlit (fast prototyping) or React (modular production)
+* Use FastAPI backend with optional caching layer for model metadata
+* Auto-unload model if idle for long duration
+
+---
+
+## **8. Security Requirements**
+
+* Prevent arbitrary model downloads
+* Allow only whitelisted Hugging Face paths
+* Rate limit predictions per session/user
