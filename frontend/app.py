@@ -262,15 +262,20 @@ def render_dti_interface():
     st.header("🎯 Drug-Target Interaction (DTI) Prediction")
     st.info("Predict interaction probability between drug compounds and target proteins using transformer models")
     
+    # Get sample data from session state if loaded via sidebar
+    default_drug = getattr(st.session_state, 'dti_drug_smiles', "")
+    default_target = getattr(st.session_state, 'dti_target_sequence', "")
+    
     col1, col2 = st.columns(2)
     
     with col1:
         st.subheader("Drug Input")
         drug_smiles = st.text_area(
             "SMILES String",
+            value=default_drug,
             placeholder="Enter drug SMILES (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)",
             height=100,
-            key="dti_drug_smiles"
+            key="dti_drug_input"
         )
         
         if st.button("Use Sample Drug", key="sample_drug_dti"):
@@ -281,9 +286,10 @@ def render_dti_interface():
         st.subheader("Target Input")
         target_sequence = st.text_area(
             "Protein Sequence",
+            value=default_target,
             placeholder="Enter target protein sequence (FASTA format)",
             height=100,
-            key="dti_target_sequence"
+            key="dti_target_input"
         )
         
         if st.button("Use Sample Target", key="sample_target_dti"):
