@@ -6,7 +6,7 @@ organized by therapeutic task type. Models are validated for safety and
 compatibility before being included in this registry.
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 # Model Registry - Contains approved Hugging Face models for each task
 MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
