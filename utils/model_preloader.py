@@ -19,25 +19,25 @@ class ModelPreloader:
         self.model_manager = model_manager
         self.preload_status = {}
         
-    def get_deeppurpose_models(self) -> List[Dict[str, Any]]:
-        """Get all DeepPurpose DTI models from registry"""
+    def get_transformer_dti_models(self) -> List[Dict[str, Any]]:
+        """Get all transformer-based DTI models from registry"""
         dti_models = get_available_models("DTI")
-        deeppurpose_models = []
+        transformer_models = []
         
         for model_name, model_config in dti_models.items():
-            if "DeepPurpose" in model_name:
-                deeppurpose_models.append({
+            if model_config.get("model_type") == "transformer":
+                transformer_models.append({
                     "name": model_name,
                     "config": model_config
                 })
         
-        return deeppurpose_models
+        return transformer_models
     
-    def preload_deeppurpose_models(self) -> Dict[str, Any]:
-        """Preload all DeepPurpose DTI models"""
-        logger.info("Starting DeepPurpose model preloading...")
+    def preload_transformer_dti_models(self) -> Dict[str, Any]:
+        """Preload all transformer-based DTI models"""
+        logger.info("Starting transformer DTI model preloading...")
         
-        models_to_load = self.get_deeppurpose_models()
+        models_to_load = self.get_transformer_dti_models()
         preload_results = {
             "total_models": len(models_to_load),
             "loaded_successfully": 0,

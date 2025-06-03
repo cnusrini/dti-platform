@@ -83,8 +83,8 @@ def render_sidebar():
     
     st.sidebar.divider()
     
-    # DeepPurpose Model Preloader
-    st.sidebar.subheader("🚀 DeepPurpose DTI Models")
+    # Transformer DTI Model Preloader
+    st.sidebar.subheader("🚀 Transformer DTI Models")
     
     # Preload status display
     preload_status = st.session_state.model_preloader.get_preload_status()
@@ -96,10 +96,10 @@ def render_sidebar():
             for model in preloaded_models:
                 st.write(f"• {model}")
     
-    # Preload all DeepPurpose models button
-    if st.sidebar.button("Load All DeepPurpose Models", key="preload_all_models", type="primary"):
-        with st.spinner("Loading all DeepPurpose DTI models..."):
-            preload_results = st.session_state.model_preloader.preload_deeppurpose_models()
+    # Preload all transformer DTI models button
+    if st.sidebar.button("Load All Transformer Models", key="preload_all_models", type="primary"):
+        with st.spinner("Loading all transformer DTI models..."):
+            preload_results = st.session_state.model_preloader.preload_transformer_dti_models()
             
             # Update session state with loaded models
             for model_name in preload_results['success_models']:

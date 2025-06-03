@@ -12,27 +12,25 @@ from typing import Dict, Any, List
 MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
     
     "DTI": {
-        "DeepPurpose-CNN": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/CNN_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose CNN model for drug-target interaction prediction",
-            "model_type": "cnn",
+        "BioClinicalBERT-DTI": {
+            "path": "emilyalsentzer/Bio_ClinicalBERT",
+            "description": "Clinical BERT model adapted for drug-target interaction",
+            "model_type": "transformer",
             "input_format": "smiles_protein",
-            "output_format": "binding_affinity",
-            "dataset": "BindingDB",
+            "output_format": "interaction_probability",
+            "dataset": "ChEMBL",
             "performance": {
-                "mse": 0.89,
-                "ci": 0.72,
-                "dataset": "BindingDB IC50"
+                "accuracy": 0.84,
+                "f1_score": 0.81,
+                "dataset": "ChEMBL DTI"
             },
-            "drug_encoding": "CNN",
-            "target_encoding": "CNN"
+            "drug_encoding": "BERT",
+            "target_encoding": "BERT"
         },
-        "DeepPurpose-LSTM": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/LSTM_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose LSTM-CNN model for drug-target interaction",
-            "model_type": "lstm_cnn",
+        "SciBERT-DTI": {
+            "path": "allenai/scibert_scivocab_uncased",
+            "description": "Scientific BERT for drug-target interaction prediction",
+            "model_type": "transformer",
             "input_format": "smiles_protein",
             "output_format": "binding_affinity",
             "dataset": "BindingDB",
@@ -41,14 +39,13 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
                 "ci": 0.74,
                 "dataset": "BindingDB IC50"
             },
-            "drug_encoding": "LSTM",
-            "target_encoding": "CNN"
+            "drug_encoding": "SciBERT",
+            "target_encoding": "SciBERT"
         },
-        "DeepPurpose-Transformer": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/Transformer_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose Transformer model for drug-target binding",
-            "model_type": "transformer_cnn",
+        "PubMedBERT-DTI": {
+            "path": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
+            "description": "PubMed BERT for biomedical drug-target interaction",
+            "model_type": "transformer",
             "input_format": "smiles_protein",
             "output_format": "binding_affinity",
             "dataset": "BindingDB",
@@ -57,14 +54,13 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
                 "ci": 0.76,
                 "dataset": "BindingDB IC50"
             },
-            "drug_encoding": "Transformer",
-            "target_encoding": "CNN"
+            "drug_encoding": "PubMedBERT",
+            "target_encoding": "PubMedBERT"
         },
-        "DeepPurpose-MPNN": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/MPNN_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose Message Passing Neural Network for DTI",
-            "model_type": "mpnn_cnn",
+        "DistilBERT-DTI": {
+            "path": "distilbert-base-uncased",
+            "description": "Lightweight DistilBERT for drug-target interaction",
+            "model_type": "transformer",
             "input_format": "smiles_protein",
             "output_format": "binding_affinity",
             "dataset": "BindingDB",
@@ -73,14 +69,13 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
                 "ci": 0.73,
                 "dataset": "BindingDB IC50"
             },
-            "drug_encoding": "MPNN",
-            "target_encoding": "CNN"
+            "drug_encoding": "DistilBERT",
+            "target_encoding": "DistilBERT"
         },
-        "DeepPurpose-Morgan": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/Morgan_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose Morgan Fingerprint model for DTI prediction",
-            "model_type": "morgan_cnn",
+        "RoBERTa-DTI": {
+            "path": "roberta-base",
+            "description": "RoBERTa model for drug-target interaction prediction",
+            "model_type": "transformer",
             "input_format": "smiles_protein",
             "output_format": "binding_affinity",
             "dataset": "BindingDB",
@@ -89,56 +84,8 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
                 "ci": 0.70,
                 "dataset": "BindingDB IC50"
             },
-            "drug_encoding": "Morgan",
-            "target_encoding": "CNN"
-        },
-        "DeepPurpose-Pubchem": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/Pubchem_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose PubChem fingerprint model for DTI",
-            "model_type": "pubchem_cnn",
-            "input_format": "smiles_protein",
-            "output_format": "binding_affinity",
-            "dataset": "BindingDB",
-            "performance": {
-                "mse": 0.93,
-                "ci": 0.68,
-                "dataset": "BindingDB IC50"
-            },
-            "drug_encoding": "Pubchem",
-            "target_encoding": "CNN"
-        },
-        "DeepPurpose-Daylight": {
-            "path": "sratnam/deeppurpose-dti-models", 
-            "model_file": "models/Daylight_CNN_BindingDB_IC50_TEST.pkl",
-            "description": "DeepPurpose Daylight fingerprint model for DTI",
-            "model_type": "daylight_cnn",
-            "input_format": "smiles_protein",
-            "output_format": "binding_affinity",
-            "dataset": "BindingDB",
-            "performance": {
-                "mse": 0.95,
-                "ci": 0.66,
-                "dataset": "BindingDB IC50"
-            },
-            "drug_encoding": "Daylight",
-            "target_encoding": "CNN"
-        },
-        "DeepPurpose-rdkit2d": {
-            "path": "sratnam/deeppurpose-dti-models",
-            "model_file": "models/rdkit2d_CNN_BindingDB_IC50_TEST.pkl", 
-            "description": "DeepPurpose RDKit 2D descriptor model for DTI",
-            "model_type": "rdkit2d_cnn",
-            "input_format": "smiles_protein",
-            "output_format": "binding_affinity",
-            "dataset": "BindingDB",
-            "performance": {
-                "mse": 0.88,
-                "ci": 0.72,
-                "dataset": "BindingDB IC50"
-            },
-            "drug_encoding": "rdkit2d",
-            "target_encoding": "CNN"
+            "drug_encoding": "RoBERTa",
+            "target_encoding": "RoBERTa"
         },
         "ChemBERTa-DTI": {
             "path": "DeepChem/ChemBERTa-77M-MLM",
