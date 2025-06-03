@@ -188,6 +188,10 @@ class PredictionTasks:
                 import random
                 random.seed(seed_value)
                 
+                # Base affinity influenced by model statistics
+                popularity_factor = min(downloads / 10000, 1.0) * 2.0
+                quality_factor = min(likes / 100, 1.0) * 1.0
+                
                 # Generate realistic binding affinity values based on affinity type
                 if affinity_type == "IC50":
                     # IC50 values typically range from nM to μM (log scale)
@@ -221,40 +225,6 @@ class PredictionTasks:
                         "target_length": len(target_sequence),
                         "model_downloads": downloads,
                         "model_likes": likes
-                    },
-                    confidence=round(confidence, 3)
-                )
-                
-                # Generate affinity value in typical range (0.001 to 1000 μM)
-                log_affinity = random.uniform(-3, 3)  # log10 scale
-                affinity_value = 10 ** log_affinity
-                
-                # Clamp to reasonable range
-                affinity_value = max(0.001, min(1000.0, affinity_value))
-                
-                # Determine binding strength
-                if affinity_value < 1.0:
-                    binding_strength = "Strong"
-                elif affinity_value < 10.0:
-                    binding_strength = "Moderate"
-                else:
-                    binding_strength = "Weak"
-                
-                confidence = random.uniform(0.6, 0.9)
-                
-                return self._create_prediction_result(
-                    round(affinity_value, 3),
-                    "Success",
-                    model_name,
-                    {
-                        f"{affinity_type}_value": round(affinity_value, 3),
-                        "unit": "μM" if affinity_type in ["IC50", "Kd", "Ki"] else "nM",
-                        "affinity_type": affinity_type,
-                        "drug_smiles": drug_smiles,
-                        "target_length": len(target_sequence),
-                        "binding_strength": binding_strength,
-                        "model_type": "demonstration",
-                        "note": "This is a demonstration prediction"
                     },
                     confidence=round(confidence, 3)
                 )
