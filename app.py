@@ -98,7 +98,7 @@ def render_sidebar():
     
     # Preload all DeepPurpose models button
     if st.sidebar.button("Load All DeepPurpose Models", key="preload_all_models", type="primary"):
-        with st.sidebar.spinner("Loading all DeepPurpose DTI models..."):
+        with st.spinner("Loading all DeepPurpose DTI models..."):
             preload_results = st.session_state.model_preloader.preload_deeppurpose_models()
             
             # Update session state with loaded models
