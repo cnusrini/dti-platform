@@ -582,7 +582,7 @@ def render_prediction_results():
                 st.write(result['details'])
         
         # Confidence explanation
-        if 'confidence' in result:
+        if 'confidence' in result and result['confidence'] is not None:
             with st.expander("Confidence Explanation"):
                 st.write(f"**Confidence Score:** {result['confidence']:.4f}")
                 if 'confidence_explanation' in result:
