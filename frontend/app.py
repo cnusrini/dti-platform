@@ -325,10 +325,49 @@ def render_dti_interface():
                         model_info = result.get('model_info', 'Unknown')
                         st.metric("Model Used", model_info)
                     
-                    # Additional details
+                    # Additional details in table format
                     if result.get('details'):
-                        st.subheader("Detailed Results")
-                        st.json(result['details'])
+                        st.subheader("Detailed Analysis")
+                        
+                        # Create a beautiful results table
+                        details_data = []
+                        for key, value in result['details'].items():
+                            if isinstance(value, dict):
+                                for sub_key, sub_value in value.items():
+                                    details_data.append({
+                                        "Property": f"{key.replace('_', ' ').title()} - {sub_key.replace('_', ' ').title()}",
+                                        "Value": str(sub_value),
+                                        "Category": key.replace('_', ' ').title()
+                                    })
+                            else:
+                                details_data.append({
+                                    "Property": key.replace('_', ' ').title(),
+                                    "Value": str(value),
+                                    "Category": "General"
+                                })
+                        
+                        if details_data:
+                            import pandas as pd
+                            df = pd.DataFrame(details_data)
+                            st.dataframe(
+                                df,
+                                use_container_width=True,
+                                hide_index=True,
+                                column_config={
+                                    "Property": st.column_config.TextColumn(
+                                        "Property",
+                                        help="Analysis parameter"
+                                    ),
+                                    "Value": st.column_config.TextColumn(
+                                        "Value",
+                                        help="Predicted or calculated value"
+                                    ),
+                                    "Category": st.column_config.TextColumn(
+                                        "Category",
+                                        help="Result category"
+                                    )
+                                }
+                            )
                 else:
                     st.error("Prediction failed. Please ensure a model is loaded.")
             
@@ -439,16 +478,129 @@ def render_admet_interface():
                     st.success("ADMET Prediction Completed")
                     
                     if result.get('properties'):
-                        st.subheader("ADMET Results")
+                        st.subheader("ADMET Analysis Results")
                         
-                        # Display results in columns
-                        cols = st.columns(3)
-                        for i, (prop, value) in enumerate(result['properties'].items()):
-                            with cols[i % 3]:
+                        # Create comprehensive ADMET results table
+                        admet_data = []
+                        property_descriptions = {
+                            'absorption': 'How well the drug is absorbed into the bloodstream',
+                            'distribution': 'How the drug spreads throughout the body',
+                            'metabolism': 'How quickly the drug is broken down',
+                            'excretion': 'How efficiently the drug is eliminated',
+                            'toxicity': 'Potential harmful effects (lower is better)',
+                            'ld50': 'Lethal dose for 50% of test subjects (mg/kg)',
+                            'logp': 'Fat solubility measure (affects distribution)',
+                            'solubility': 'Water solubility (affects absorption)',
+                            'bioavailability': 'Percentage that reaches circulation',
+                            'clearance': 'Rate of drug elimination from body'
+                        }
+                        
+                        safety_ranges = {
+                            'toxicity': {'low': 0.3, 'high': 0.7},
+                            'ld50': {'low': 100, 'high': 1000},
+                            'logp': {'low': -0.4, 'high': 5.6},
+                            'solubility': {'low': 0.01, 'high': 1.0},
+                            'bioavailability': {'low': 0.3, 'high': 1.0},
+                            'absorption': {'low': 0.5, 'high': 1.0},
+                            'distribution': {'low': 0.3, 'high': 1.0}
+                        }
+                        
+                        for prop, value in result['properties'].items():
+                            # Determine safety status
+                            safety_status = "Unknown"
+                            status_color = "🔵"
+                            
+                            if prop in safety_ranges:
+                                ranges = safety_ranges[prop]
                                 if isinstance(value, (int, float)):
-                                    st.metric(prop.title(), f"{value:.3f}")
-                                else:
-                                    st.metric(prop.title(), str(value))
+                                    if prop == 'toxicity':  # Lower is better for toxicity
+                                        if value < ranges['low']:
+                                            safety_status = "Excellent"
+                                            status_color = "🟢"
+                                        elif value < ranges['high']:
+                                            safety_status = "Acceptable"
+                                            status_color = "🟡"
+                                        else:
+                                            safety_status = "Concerning"
+                                            status_color = "🔴"
+                                    else:  # Higher is better for others
+                                        if value > ranges['high']:
+                                            safety_status = "Excellent"
+                                            status_color = "🟢"
+                                        elif value > ranges['low']:
+                                            safety_status = "Good"
+                                            status_color = "🟡"
+                                        else:
+                                            safety_status = "Poor"
+                                            status_color = "🔴"
+                            
+                            # Format value for display
+                            if isinstance(value, float):
+                                display_value = f"{value:.3f}"
+                            elif isinstance(value, int):
+                                display_value = str(value)
+                            else:
+                                display_value = str(value)
+                            
+                            admet_data.append({
+                                "Property": prop.replace('_', ' ').title(),
+                                "Value": display_value,
+                                "Status": f"{status_color} {safety_status}",
+                                "Description": property_descriptions.get(prop, "Drug property measurement")
+                            })
+                        
+                        if admet_data:
+                            import pandas as pd
+                            df = pd.DataFrame(admet_data)
+                            
+                            st.dataframe(
+                                df,
+                                use_container_width=True,
+                                hide_index=True,
+                                column_config={
+                                    "Property": st.column_config.TextColumn(
+                                        "ADMET Property",
+                                        help="Pharmacokinetic parameter",
+                                        width="medium"
+                                    ),
+                                    "Value": st.column_config.TextColumn(
+                                        "Predicted Value",
+                                        help="Model prediction result",
+                                        width="small"
+                                    ),
+                                    "Status": st.column_config.TextColumn(
+                                        "Safety Assessment",
+                                        help="Clinical interpretation",
+                                        width="medium"
+                                    ),
+                                    "Description": st.column_config.TextColumn(
+                                        "What This Means",
+                                        help="Plain language explanation",
+                                        width="large"
+                                    )
+                                }
+                            )
+                            
+                            # Summary insights
+                            st.subheader("Clinical Insights")
+                            
+                            excellent_count = sum(1 for item in admet_data if "Excellent" in item["Status"])
+                            concerning_count = sum(1 for item in admet_data if "Concerning" in item["Status"])
+                            
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("Excellent Properties", excellent_count)
+                            with col2:
+                                st.metric("Total Analyzed", len(admet_data))
+                            with col3:
+                                st.metric("Concerning Properties", concerning_count)
+                            
+                            if concerning_count > 0:
+                                st.warning("Some properties may require optimization before clinical use.")
+                            elif excellent_count >= len(admet_data) // 2:
+                                st.success("Overall favorable pharmacokinetic profile.")
+                            else:
+                                st.info("Mixed pharmacokinetic profile - further evaluation recommended.")
                 else:
                     st.error("Prediction failed. Please ensure a model is loaded.")
             
