@@ -21,11 +21,12 @@ class ModelPreloader:
         
     def get_transformer_dti_models(self) -> List[Dict[str, Any]]:
         """Get all transformer-based DTI models from registry"""
-        dti_models = get_available_models("DTI")
+        dti_data = get_available_models("DTI")
+        dti_models = dti_data.get("models", {}) if isinstance(dti_data, dict) else {}
         transformer_models = []
         
         for model_name, model_config in dti_models.items():
-            if model_config.get("model_type") == "transformer":
+            if isinstance(model_config, dict) and model_config.get("model_type") == "transformer":
                 transformer_models.append({
                     "name": model_name,
                     "config": model_config
