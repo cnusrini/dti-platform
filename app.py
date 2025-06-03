@@ -131,6 +131,51 @@ def render_sidebar():
     
     st.sidebar.divider()
     
+    # Sample Data section
+    st.sidebar.subheader("📋 Sample Data")
+    
+    # Sample data for different tasks
+    sample_data = {
+        'DTI': {
+            'drug_smiles': 'CC(=O)OC1=CC=CC=C1C(=O)O',  # Aspirin
+            'target_sequence': 'MGSWAEFKQRLAAIGLLMLLKHLLLSLKKFGKLQFSLPSLLQLFCRQRLLPSLLPWLSSSLKVMLLKHL'
+        },
+        'DTA': {
+            'drug_smiles': 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C',  # Caffeine
+            'target_sequence': 'MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR'
+        },
+        'DDI': {
+            'drug1_smiles': 'CC(C)CC1=CC=C(C=C1)C(C)C(=O)O',  # Ibuprofen
+            'drug2_smiles': 'CC(=O)OC1=CC=CC=C1C(=O)O'  # Aspirin
+        },
+        'ADMET': {
+            'drug_smiles': 'CN1CCN(CC1)CCCC(C2=CC=CC=C2)C3=CC=CC=C3',  # Cetirizine-like
+        },
+        'Similarity': {
+            'query_smiles': 'CCO'  # Ethanol
+        }
+    }
+    
+    if st.sidebar.button("🎯 Use Sample Data", use_container_width=True):
+        current_samples = sample_data.get(st.session_state.current_task, {})
+        
+        # Store sample data in session state for the current task
+        for key, value in current_samples.items():
+            st.session_state[f"sample_{key}"] = value
+        
+        st.sidebar.success(f"Sample data loaded for {st.session_state.current_task}!")
+        st.rerun()
+    
+    # Display current sample data
+    if st.session_state.current_task in sample_data:
+        with st.sidebar.expander("View Sample Data"):
+            samples = sample_data[st.session_state.current_task]
+            for key, value in samples.items():
+                st.caption(f"**{key.replace('_', ' ').title()}:**")
+                st.code(value[:50] + "..." if len(value) > 50 else value, language="text")
+    
+    st.sidebar.divider()
+    
     # Settings section
     st.sidebar.subheader("Settings")
     
@@ -168,6 +213,7 @@ def render_dti_interface():
     with col1:
         drug_smiles = st.text_area(
             "Drug SMILES",
+            value=st.session_state.get('sample_drug_smiles', ''),
             placeholder="Enter SMILES string (e.g., CCO for ethanol)",
             help="Simplified Molecular Input Line Entry System notation"
         )
@@ -186,6 +232,7 @@ def render_dti_interface():
     with col2:
         target_sequence = st.text_area(
             "Target Protein Sequence",
+            value=st.session_state.get('sample_target_sequence', ''),
             placeholder="Enter protein sequence in FASTA format",
             help="Amino acid sequence of the target protein"
         )
@@ -241,6 +288,7 @@ def render_dta_interface():
     with col1:
         drug_smiles = st.text_area(
             "Drug SMILES",
+            value=st.session_state.get('sample_drug_smiles', ''),
             placeholder="Enter SMILES string",
             help="Simplified Molecular Input Line Entry System notation"
         )
@@ -254,6 +302,7 @@ def render_dta_interface():
     with col2:
         target_sequence = st.text_area(
             "Target Protein Sequence",
+            value=st.session_state.get('sample_target_sequence', ''),
             placeholder="Enter protein sequence",
             help="Amino acid sequence of the target protein"
         )
@@ -302,6 +351,7 @@ def render_ddi_interface():
     with col1:
         drug1_smiles = st.text_area(
             "Drug 1 SMILES",
+            value=st.session_state.get('sample_drug1_smiles', ''),
             placeholder="Enter SMILES for first drug",
             help="SMILES notation for the first drug"
         )
@@ -309,6 +359,7 @@ def render_ddi_interface():
     with col2:
         drug2_smiles = st.text_area(
             "Drug 2 SMILES",
+            value=st.session_state.get('sample_drug2_smiles', ''),
             placeholder="Enter SMILES for second drug",
             help="SMILES notation for the second drug"
         )
@@ -363,6 +414,7 @@ def render_admet_interface():
     with col1:
         drug_smiles = st.text_area(
             "Drug SMILES",
+            value=st.session_state.get('sample_drug_smiles', ''),
             placeholder="Enter SMILES string",
             help="SMILES notation for the compound"
         )
@@ -419,6 +471,7 @@ def render_similarity_interface():
     with col1:
         query_smiles = st.text_area(
             "Query SMILES",
+            value=st.session_state.get('sample_query_smiles', ''),
             placeholder="Enter SMILES for query compound",
             help="SMILES notation for the query molecule"
         )
