@@ -1,0 +1,53 @@
+name: Deploy PharmQAgentAI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install streamlit pandas numpy requests torch transformers
+        pip install fastapi uvicorn pydantic
+    
+    - name: Test imports
+      run: |
+        python -c "import streamlit; print('Streamlit OK')"
+        python -c "import pandas; print('Pandas OK')"
+        python -c "import torch; print('PyTorch OK')"
+        python -c "import transformers; print('Transformers OK')"
+    
+    - name: Validate Python syntax
+      run: |
+        python -m py_compile frontend/app.py
+        python -m py_compile backend/api/main.py
+        find . -name "*.py" -exec python -m py_compile {} \;
+
+  deploy-streamlit:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Streamlit Cloud
+      run: |
+        echo "Ready for Streamlit Cloud deployment"
+        echo "Connect this repository to Streamlit Cloud"
+        echo "Set HUGGINGFACE_TOKEN in Streamlit secrets"
+        echo "Deploy frontend/app.py as main file"
