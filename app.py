@@ -11,6 +11,7 @@ from models.model_manager import ModelManager
 from models.prediction_tasks import PredictionTasks
 from utils.molecular_utils import MolecularUtils
 from utils.validation import ValidationUtils
+from utils.model_preloader import ModelPreloader
 from config.model_registry import MODEL_REGISTRY
 
 # Page configuration
@@ -30,12 +31,16 @@ if 'molecular_utils' not in st.session_state:
     st.session_state.molecular_utils = MolecularUtils()
 if 'validation_utils' not in st.session_state:
     st.session_state.validation_utils = ValidationUtils()
+if 'model_preloader' not in st.session_state:
+    st.session_state.model_preloader = ModelPreloader(st.session_state.model_manager)
 if 'current_task' not in st.session_state:
     st.session_state.current_task = 'DTI'
 if 'loaded_models' not in st.session_state:
     st.session_state.loaded_models = {}
 if 'prediction_results' not in st.session_state:
     st.session_state.prediction_results = {}
+if 'preload_initiated' not in st.session_state:
+    st.session_state.preload_initiated = False
 
 def render_top_bar():
     """Render the top navigation bar"""
@@ -75,6 +80,43 @@ def render_sidebar():
     if current_task != st.session_state.current_task:
         st.session_state.current_task = current_task
         st.rerun()
+    
+    st.sidebar.divider()
+    
+    # DeepPurpose Model Preloader
+    st.sidebar.subheader("🚀 DeepPurpose DTI Models")
+    
+    # Preload status display
+    preload_status = st.session_state.model_preloader.get_preload_status()
+    preloaded_models = st.session_state.model_preloader.get_preloaded_models()
+    
+    if preloaded_models:
+        st.sidebar.success(f"✓ {len(preloaded_models)} models loaded")
+        with st.sidebar.expander("Loaded Models"):
+            for model in preloaded_models:
+                st.write(f"• {model}")
+    
+    # Preload all DeepPurpose models button
+    if st.sidebar.button("Load All DeepPurpose Models", key="preload_all_models", type="primary"):
+        with st.sidebar.spinner("Loading all DeepPurpose DTI models..."):
+            preload_results = st.session_state.model_preloader.preload_deeppurpose_models()
+            
+            # Update session state with loaded models
+            for model_name in preload_results['success_models']:
+                model_key = f"DTI_{model_name}"
+                st.session_state.loaded_models[model_key] = {
+                    'task': 'DTI',
+                    'name': model_name,
+                    'loaded_at': datetime.now()
+                }
+            
+            if preload_results['loaded_successfully'] > 0:
+                st.sidebar.success(f"Successfully loaded {preload_results['loaded_successfully']} models!")
+            
+            if preload_results['failed_models']:
+                st.sidebar.warning(f"{len(preload_results['failed_models'])} models failed to load")
+                
+            st.rerun()
     
     st.sidebar.divider()
     
