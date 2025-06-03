@@ -108,7 +108,7 @@ def render_sidebar():
         
         if load_button:
             try:
-                with st.sidebar.spinner(f"Loading {selected_model}..."):
+                with st.spinner(f"Loading {selected_model}..."):
                     success = st.session_state.model_manager.load_model(
                         current_task, 
                         selected_model, 
