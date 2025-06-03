@@ -174,6 +174,81 @@ def render_sidebar():
             except Exception as e:
                 st.sidebar.error(f"Error loading model: {str(e)}")
     
+    # Sample Data Section
+    st.sidebar.divider()
+    st.sidebar.subheader("📋 Quick Test Data")
+    st.sidebar.caption("One-click loading with authentic molecular examples")
+    
+    # Sample data selector
+    sample_sets = {
+        "Aspirin + COX-2": {"type": "DTI", "drug": "CC(=O)OC1=CC=CC=C1C(=O)O", "description": "Anti-inflammatory"},
+        "Caffeine + Adenosine": {"type": "DTI", "drug": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C", "description": "Stimulant"},
+        "Paclitaxel + Tubulin": {"type": "DTA", "drug": "CC1=C2C(C(=O)C3(C(CC4C(C3C(C(C2(C)C)(CC1OC(=O)C(C(C5=CC=CC=C5)NC(=O)C6=CC=CC=C6)O)O)OC(=O)C7=CC=CC=C7)(CO4)OC(=O)C)O)C)OC(=O)C", "description": "Anticancer"},
+        "Warfarin + Vitamin K": {"type": "DDI", "drug1": "CC1=CC2=C(C=C1)SC(=O)NC2=O", "drug2": "CC(CCCC(C)CCCC(C)CCCC(C)C)C", "description": "Anticoagulant"},
+        "Atorvastatin Properties": {"type": "ADMET", "drug": "CC(C)C1=C(C(=C(N1CC[C@H](C[C@H](CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4", "description": "Cholesterol drug"},
+        "Morphine Analogs": {"type": "Similarity", "drug": "CN1CC[C@]23C4=C5C=CC(=C4C(=O)CC[C@H]2[C@H]1CC6=C3C(=C(C=C6)O)O5)O", "description": "Opioid analgesic"}
+    }
+    
+    selected_sample = st.sidebar.selectbox(
+        "Choose Sample Dataset",
+        list(sample_sets.keys()),
+        format_func=lambda x: f"{sample_sets[x]['type']}: {sample_sets[x]['description']}"
+    )
+    
+    if st.sidebar.button("Load Selected Sample", type="primary", key="load_selected_sample"):
+        sample = sample_sets[selected_sample]
+        task_type = sample["type"]
+        
+        if task_type == "DTI":
+            st.session_state.dti_drug_smiles = sample["drug"]
+            st.session_state.dti_target_sequence = "MKVLWAALLVTFLAGCQAKVEQAVETEPEPELRQQTEWQSGQRWELALGRFWDYLRWVQTLSEQVQEELLSSQVTQELRALMDETAQALPQPVRQLLSSQVTQELRALMDETAQ"
+            st.session_state.current_task = "DTI"
+        elif task_type == "DTA":
+            st.session_state.dta_drug_smiles = sample["drug"]
+            st.session_state.dta_target_sequence = "MKVLWAALLVTFLAGCQAKVEQAVETEPEPELRQQTEWQSGQRWELALGRFWDYLRWVQTLSEQVQEELLSSQVTQELRALMDETAQALPQPVRQLLSSQVTQELRALMDETAQ"
+            st.session_state.current_task = "DTA"
+        elif task_type == "DDI":
+            st.session_state.ddi_drug1_smiles = sample["drug1"]
+            st.session_state.ddi_drug2_smiles = sample["drug2"]
+            st.session_state.current_task = "DDI"
+        elif task_type == "ADMET":
+            st.session_state.admet_drug_smiles = sample["drug"]
+            st.session_state.current_task = "ADMET"
+        elif task_type == "Similarity":
+            st.session_state.sim_query_smiles = sample["drug"]
+            st.session_state.current_task = "Similarity"
+        
+        st.sidebar.success(f"Loaded {sample['description']} sample")
+        st.rerun()
+    
+    # Additional quick samples
+    with st.sidebar.expander("More Examples"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("Ibuprofen", key="quick_ibuprofen", use_container_width=True):
+                st.session_state.dti_drug_smiles = "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+                st.session_state.current_task = "DTI"
+                st.rerun()
+        
+        with col2:
+            if st.button("Acetaminophen", key="quick_acetaminophen", use_container_width=True):
+                st.session_state.dti_drug_smiles = "CC(=O)NC1=CC=C(C=C1)O"
+                st.session_state.current_task = "DTI"
+                st.rerun()
+        
+        with col1:
+            if st.button("Dopamine", key="quick_dopamine", use_container_width=True):
+                st.session_state.dti_drug_smiles = "C1=CC(=C(C=C1CCN)O)O"
+                st.session_state.current_task = "DTI"
+                st.rerun()
+        
+        with col2:
+            if st.button("Insulin", key="quick_insulin", use_container_width=True):
+                st.session_state.dti_target_sequence = "GIVEQCCTSICSLYQLENYCNFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
+                st.session_state.current_task = "DTI"
+                st.rerun()
+    
     # Cleanup models
     st.sidebar.divider()
     if st.sidebar.button("Unload All Models", type="secondary"):
