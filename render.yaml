@@ -1,9 +1,4 @@
-services:
-  - type: web
-    name: pharmqagentai
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python run_server.py
-    envVars:
-      - key: HUGGINGFACE_TOKEN
-        sync: false
+# Render deployment configuration disabled - using manual settings instead
+# Configure directly in Render dashboard:
+# Build Command: pip install -r requirements.txt
+# Start Command: streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
