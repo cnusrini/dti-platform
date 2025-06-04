@@ -3,9 +3,7 @@ services:
     name: pharmqagentai
     runtime: python
     plan: free
-    buildCommand: |
-      pip install --upgrade pip
-      pip install streamlit pandas numpy requests torch transformers fastapi uvicorn pydantic
+    buildCommand: pip install -r requirements.txt
     startCommand: streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0
     envVars:
       - key: HUGGINGFACE_TOKEN
@@ -13,20 +11,4 @@ services:
       - key: PYTHON_VERSION
         value: "3.11"
     healthCheckPath: /
-    autoDeploy: true
-    
-  - type: web
-    name: pharmqagentai-backend
-    runtime: python
-    plan: free
-    buildCommand: |
-      pip install --upgrade pip
-      pip install fastapi uvicorn pydantic torch transformers requests
-    startCommand: uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: HUGGINGFACE_TOKEN
-        sync: false
-      - key: PYTHON_VERSION
-        value: "3.11"
-    healthCheckPath: /health
     autoDeploy: true
