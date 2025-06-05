@@ -603,13 +603,8 @@ def render_dti_interface():
                     # Store prediction results for AI analysis
                     st.session_state.prediction_results['DTI'] = result
                     
-                    # Cache prediction display data to preserve during AI analysis
-                    st.session_state.cached_prediction_display = {
-                        'task': 'DTI',
-                        'result': result,
-                        'drug_smiles': drug_smiles,
-                        'target_sequence': target_sequence
-                    }
+                    # Set preservation flag to maintain display during AI analysis
+                    st.session_state.preserve_prediction_results = True
                     
                     col1, col2, col3 = st.columns(3)
                     
@@ -1142,13 +1137,14 @@ def render_ai_analysis_section():
         else:
             st.write("No prediction results available")
     
-    # Analysis button
-    analyze_button = st.button(
-        f"🔍 Get AI {analysis_type}",
-        disabled=not current_results or (analysis_type == "Ask Custom Question" and not user_question),
-        type="primary",
-        use_container_width=True
-    )
+    # Use form to prevent page clearing on analysis
+    with st.form(key="ai_analysis_form", clear_on_submit=False):
+        analyze_button = st.form_submit_button(
+            f"🔍 Get AI {analysis_type}",
+            disabled=not current_results or (analysis_type == "Ask Custom Question" and not user_question),
+            type="primary",
+            use_container_width=True
+        )
     
     if analyze_button:
         with st.spinner("AI is analyzing your results..."):
@@ -1192,17 +1188,7 @@ def render_ai_analysis_section():
                     "timestamp": datetime.now().isoformat()
                 })
                 
-                # Display the result immediately without rerun to preserve prediction results
-                st.success("Analysis completed!")
-                with st.expander(f"AI Analysis: {analysis_type}", expanded=True):
-                    st.markdown(f"**Analysis Type:** {analysis_type}")
-                    if user_question and analysis_type == "Ask Custom Question":
-                        st.markdown(f"**Question:** {user_question}")
-                    st.markdown(f"**AI Response:**")
-                    st.write(response)
-                    st.caption(f"Task: {task_type} | Generated: {datetime.now().strftime('%H:%M:%S')}")
-                    
-                # Don't use st.rerun() to preserve the prediction display
+                # Don't trigger rerun - let analysis history display handle the results
                 
             except Exception as e:
                 st.error(f"Analysis error: {str(e)}")
