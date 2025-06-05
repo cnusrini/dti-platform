@@ -69,22 +69,38 @@ st.markdown("""
     
     /* Sophisticated button styling */
     .stButton > button {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        font-family: 'Inter', sans-serif;
-        letter-spacing: 0.025em;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.24);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: 600 !important;
+        font-family: 'Inter', sans-serif !important;
+        letter-spacing: 0.025em !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.24) !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+        text-decoration: none !important;
     }
     
     .stButton > button:hover {
-        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.32);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.32) !important;
+        transform: translateY(-1px) !important;
+        color: white !important;
+    }
+    
+    .stButton > button:focus {
+        color: white !important;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    .stButton > button:active {
+        color: white !important;
+        background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
     }
     
     /* Sidebar with modern design */
