@@ -408,7 +408,7 @@ def render_sidebar():
         user_query = st.sidebar.text_area(
             "Ask about drug discovery:",
             placeholder="e.g., 'What affects bioavailability?'",
-            height=60,
+            height=68,
             key="sidebar_ai_query"
         )
         
