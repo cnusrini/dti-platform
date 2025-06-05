@@ -310,6 +310,8 @@ if 'ai_chat_history' not in st.session_state:
     st.session_state.ai_chat_history = []
 if 'agent_analysis' not in st.session_state:
     st.session_state.agent_analysis = {}
+if 'show_results_after_analysis' not in st.session_state:
+    st.session_state.show_results_after_analysis = False
 
 def render_top_bar():
     """Render the top navigation bar"""
@@ -1071,15 +1073,8 @@ def render_ai_analysis_section():
                     "timestamp": datetime.now().isoformat()
                 })
                 
-                # Display the result immediately without rerun to preserve prediction results
-                st.success("Analysis completed!")
-                with st.expander(f"AI Analysis: {analysis_type}", expanded=True):
-                    st.markdown(f"**Analysis Type:** {analysis_type}")
-                    if user_question and analysis_type == "Ask Custom Question":
-                        st.markdown(f"**Question:** {user_question}")
-                    st.markdown(f"**AI Response:**")
-                    st.write(response)
-                    st.caption(f"Task: {task_type} | Generated: {datetime.now().strftime('%H:%M:%S')}")
+                # Set flag to show results in separate container to avoid clearing prediction display
+                st.session_state.show_results_after_analysis = True
                 
             except Exception as e:
                 st.error(f"Analysis error: {str(e)}")
@@ -1088,28 +1083,35 @@ def render_ai_analysis_section():
     if hasattr(st.session_state, 'ai_analysis_history') and st.session_state.ai_analysis_history:
         st.markdown("### 📊 Analysis Results")
         
-        # Show the most recent analysis
-        latest_analysis = st.session_state.ai_analysis_history[-1]
+        # Show the most recent analysis immediately if flag is set
+        if st.session_state.show_results_after_analysis:
+            latest_analysis = st.session_state.ai_analysis_history[-1]
+            st.success("AI Analysis completed!")
+            
+            with st.container():
+                st.markdown(f"**Analysis Type:** {latest_analysis['type']}")
+                if latest_analysis['question'] != latest_analysis['type']:
+                    st.markdown(f"**Question:** {latest_analysis['question']}")
+                st.markdown(f"**AI Response:**")
+                st.write(latest_analysis['results'])
+                st.caption(f"Task: {latest_analysis['task']} | Generated: {latest_analysis['timestamp']}")
+            
+            # Reset the flag
+            st.session_state.show_results_after_analysis = False
         
-        with st.expander(f"Latest: {latest_analysis['type']}", expanded=True):
-            st.markdown(f"**Question/Type:** {latest_analysis['question']}")
-            st.markdown(f"**Analysis:**")
-            st.write(latest_analysis['results'])
-            st.caption(f"Task: {latest_analysis['task']} | Time: {latest_analysis['timestamp']}")
-        
-        # Show previous analyses
-        if len(st.session_state.ai_analysis_history) > 1:
-            with st.expander(f"Previous Analyses ({len(st.session_state.ai_analysis_history) - 1})"):
-                for i, analysis in enumerate(reversed(st.session_state.ai_analysis_history[:-1])):
-                    st.markdown(f"**{analysis['type']}:** {analysis['question'][:100]}...")
-                    st.write(analysis['results'][:200] + "..." if len(analysis['results']) > 200 else analysis['results'])
-                    st.caption(f"Task: {analysis['task']} | Time: {analysis['timestamp']}")
-                    if i < len(st.session_state.ai_analysis_history) - 2:
-                        st.divider()
+        # Show expandable history of all analyses
+        with st.expander(f"Analysis History ({len(st.session_state.ai_analysis_history)} total)", expanded=False):
+            for i, analysis in enumerate(reversed(st.session_state.ai_analysis_history)):
+                st.markdown(f"**{i+1}. {analysis['type']}:** {analysis['question'][:100]}...")
+                st.write(analysis['results'][:200] + "..." if len(analysis['results']) > 200 else analysis['results'])
+                st.caption(f"Task: {analysis['task']} | Time: {analysis['timestamp']}")
+                if i < len(st.session_state.ai_analysis_history) - 1:
+                    st.divider()
         
         # Clear analysis history
         if st.button("🗑️ Clear Analysis History"):
             st.session_state.ai_analysis_history = []
+            st.session_state.show_results_after_analysis = False
             st.success("Analysis history cleared")
 
 def main():
@@ -1130,6 +1132,8 @@ def main():
         render_admet_interface()
     elif st.session_state.current_task == "Similarity":
         render_similarity_interface()
+    
+
     
     # AI Assistant - Contextual Analysis Section
     if st.session_state.prediction_results:
