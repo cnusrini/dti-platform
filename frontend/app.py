@@ -1071,7 +1071,15 @@ def render_ai_analysis_section():
                     "timestamp": datetime.now().isoformat()
                 })
                 
-                st.rerun()
+                # Display the result immediately without rerun to preserve prediction results
+                st.success("Analysis completed!")
+                with st.expander(f"AI Analysis: {analysis_type}", expanded=True):
+                    st.markdown(f"**Analysis Type:** {analysis_type}")
+                    if user_question and analysis_type == "Ask Custom Question":
+                        st.markdown(f"**Question:** {user_question}")
+                    st.markdown(f"**AI Response:**")
+                    st.write(response)
+                    st.caption(f"Task: {task_type} | Generated: {datetime.now().strftime('%H:%M:%S')}")
                 
             except Exception as e:
                 st.error(f"Analysis error: {str(e)}")
@@ -1102,7 +1110,7 @@ def render_ai_analysis_section():
         # Clear analysis history
         if st.button("🗑️ Clear Analysis History"):
             st.session_state.ai_analysis_history = []
-            st.rerun()
+            st.success("Analysis history cleared")
 
 def main():
     """Main application function"""
