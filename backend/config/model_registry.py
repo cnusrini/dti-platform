@@ -14,6 +14,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
     "DTI": {
         "SciBERT-DTI": {
             "path": "allenai/scibert_scivocab_uncased",
+            "url": "https://huggingface.co/allenai/scibert_scivocab_uncased",
             "description": "Scientific BERT for drug-target interaction prediction",
             "model_type": "transformer",
             "input_format": "smiles_protein",
@@ -29,6 +30,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
         },
         "PubMedBERT-DTI": {
             "path": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
+            "url": "https://huggingface.co/microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
             "description": "PubMed BERT for biomedical drug-target interaction",
             "model_type": "transformer",
             "input_format": "smiles_protein",
@@ -44,6 +46,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Dict[str, Any]]] = {
         },
         "ChemBERTa-DTI": {
             "path": "DeepChem/ChemBERTa-77M-MLM",
+            "url": "https://huggingface.co/DeepChem/ChemBERTa-77M-MLM",
             "description": "Chemical BERT model for drug-target interaction prediction",
             "model_type": "transformer",
             "input_format": "smiles_protein",

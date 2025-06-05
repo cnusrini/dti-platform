@@ -423,6 +423,17 @@ def render_sidebar():
             else:
                 st.error("✗")
         
+        # Model reference link
+        model_config = available_models.get(selected_model, {})
+        model_url = model_config.get('url')
+        if model_url:
+            st.sidebar.markdown(f"🔗 [View {selected_model} on Hugging Face]({model_url})")
+        
+        # Model description
+        model_description = model_config.get('description')
+        if model_description:
+            st.sidebar.caption(model_description)
+        
         if load_button:
             try:
                 with st.spinner(f"Loading {selected_model}..."):
@@ -520,9 +531,24 @@ def render_sidebar():
                 st.session_state.current_task = "DTI"
                 st.rerun()
     
-    # Cleanup models
+    # Model Reference Center
     st.sidebar.divider()
-    if st.sidebar.button("Unload All Models", type="secondary"):
+    st.sidebar.subheader("📚 Model Reference")
+    
+    if st.sidebar.button("View All Models", use_container_width=True):
+        with st.sidebar.expander("Model Library", expanded=True):
+            for task, models in MODEL_REGISTRY.items():
+                st.write(f"**{task} Models:**")
+                for model_name, config in models.items():
+                    model_url = config.get('url')
+                    if model_url:
+                        st.markdown(f"• [🔗 {model_name}]({model_url})")
+                    else:
+                        st.write(f"• {model_name}")
+                st.divider()
+    
+    # Cleanup models
+    if st.sidebar.button("Unload All Models", type="secondary", use_container_width=True):
         st.session_state.model_manager.unload_all_models()
         st.session_state.loaded_models = {}
         st.sidebar.success("All models unloaded")
@@ -590,6 +616,37 @@ def render_dti_interface():
                     with col3:
                         model_info = result.get('model_info', 'Unknown')
                         st.metric("Model Used", model_info)
+                        
+                        # Add model reference link
+                        if model_info != 'Unknown':
+                            model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
+                            model_url = model_config.get('url')
+                            if model_url:
+                                st.markdown(f"🔗 [View on Hugging Face]({model_url})", unsafe_allow_html=True)
+                    
+                    # Model Information Section
+                    if model_info != 'Unknown':
+                        with st.expander("📊 Model Information", expanded=False):
+                            model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
+                            if model_config:
+                                col1, col2 = st.columns(2)
+                                
+                                with col1:
+                                    st.write(f"**Description:** {model_config.get('description', 'N/A')}")
+                                    st.write(f"**Model Type:** {model_config.get('model_type', 'N/A')}")
+                                    st.write(f"**Dataset:** {model_config.get('dataset', 'N/A')}")
+                                
+                                with col2:
+                                    performance = model_config.get('performance', {})
+                                    if performance:
+                                        st.write("**Performance Metrics:**")
+                                        for metric, value in performance.items():
+                                            if metric != 'dataset':
+                                                st.write(f"• {metric.upper()}: {value}")
+                                
+                                model_url = model_config.get('url')
+                                if model_url:
+                                    st.markdown(f"🔗 **[View Model on Hugging Face]({model_url})**")
                     
                     # Additional details in table format
                     if result.get('details'):
