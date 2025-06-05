@@ -18,6 +18,7 @@ from utils.molecular_utils import MolecularUtils
 from utils.validation import ValidationUtils
 from utils.model_preloader import ModelPreloader
 from config.model_registry import MODEL_REGISTRY
+from agents.agent_manager import agent_manager
 
 # Page configuration
 st.set_page_config(
@@ -305,6 +306,10 @@ if 'loaded_models' not in st.session_state:
     st.session_state.loaded_models = {}
 if 'prediction_results' not in st.session_state:
     st.session_state.prediction_results = {}
+if 'ai_chat_history' not in st.session_state:
+    st.session_state.ai_chat_history = []
+if 'agent_analysis' not in st.session_state:
+    st.session_state.agent_analysis = {}
 
 def render_top_bar():
     """Render the top navigation bar"""
@@ -387,6 +392,65 @@ def render_sidebar():
                 st.sidebar.warning(f"{len(preload_results['failed_models'])} models failed to load")
                 
             st.rerun()
+    
+    st.sidebar.divider()
+    
+    # AI Assistant Section
+    st.sidebar.subheader("🤖 AI Assistant")
+    
+    # Check agent status
+    agent_status = agent_manager.get_agent_status()
+    
+    if agent_status.get('enabled', False):
+        st.sidebar.success("AI Assistant Active")
+        
+        # Quick chat interface
+        user_query = st.sidebar.text_area(
+            "Ask about drug discovery:",
+            placeholder="e.g., 'What affects bioavailability?'",
+            height=60,
+            key="sidebar_ai_query"
+        )
+        
+        if st.sidebar.button("💬 Ask", disabled=not user_query.strip(), use_container_width=True):
+            if user_query.strip():
+                with st.spinner("AI thinking..."):
+                    import asyncio
+                    
+                    try:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        response = loop.run_until_complete(
+                            agent_manager.process_drug_query(user_query.strip())
+                        )
+                        loop.close()
+                        
+                        # Add to chat history
+                        st.session_state.ai_chat_history.append({
+                            "user": user_query.strip(),
+                            "assistant": response.get('response', 'No response generated'),
+                            "timestamp": response.get('timestamp', '')
+                        })
+                        
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.sidebar.error(f"Error: {str(e)}")
+        
+        # Show last response
+        if st.session_state.ai_chat_history:
+            with st.sidebar.expander("Latest Response", expanded=True):
+                latest = st.session_state.ai_chat_history[-1]
+                st.write(f"**Q:** {latest['user'][:50]}...")
+                st.write(f"**A:** {latest['assistant'][:200]}...")
+        
+        if st.sidebar.button("🗑️ Clear Chat", use_container_width=True):
+            st.session_state.ai_chat_history = []
+            st.rerun()
+    
+    else:
+        st.sidebar.warning("AI Assistant Unavailable")
+        st.sidebar.info("Requires Google AI API key")
     
     st.sidebar.divider()
     
