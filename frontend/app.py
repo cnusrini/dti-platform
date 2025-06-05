@@ -312,6 +312,10 @@ if 'agent_analysis' not in st.session_state:
     st.session_state.agent_analysis = {}
 if 'show_results_after_analysis' not in st.session_state:
     st.session_state.show_results_after_analysis = False
+if 'cached_prediction_display' not in st.session_state:
+    st.session_state.cached_prediction_display = None
+if 'preserve_prediction_results' not in st.session_state:
+    st.session_state.preserve_prediction_results = False
 
 def render_top_bar():
     """Render the top navigation bar"""
@@ -598,6 +602,14 @@ def render_dti_interface():
                     
                     # Store prediction results for AI analysis
                     st.session_state.prediction_results['DTI'] = result
+                    
+                    # Cache prediction display data to preserve during AI analysis
+                    st.session_state.cached_prediction_display = {
+                        'task': 'DTI',
+                        'result': result,
+                        'drug_smiles': drug_smiles,
+                        'target_sequence': target_sequence
+                    }
                     
                     col1, col2, col3 = st.columns(3)
                     
@@ -972,6 +984,113 @@ def render_similarity_interface():
             except Exception as e:
                 st.error(f"Search error: {str(e)}")
 
+def render_cached_prediction_results():
+    """Render cached prediction results to preserve during AI analysis"""
+    if not st.session_state.cached_prediction_display:
+        return
+    
+    cached = st.session_state.cached_prediction_display
+    result = cached['result']
+    task = cached['task']
+    
+    st.markdown("### 📊 Prediction Results (Preserved)")
+    
+    if task == 'DTI':
+        st.success("DTI Prediction Completed")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            score = result.get('score', 0.0)
+            if isinstance(score, (int, float)):
+                st.metric("Interaction Score", f"{score:.3f}")
+            else:
+                st.metric("Interaction Score", str(score))
+        
+        with col2:
+            confidence = result.get('confidence')
+            if confidence:
+                st.metric("Confidence", f"{confidence*100:.1f}%")
+            else:
+                st.metric("Confidence", "N/A")
+        
+        with col3:
+            model_info = result.get('model_info', 'Unknown')
+            st.metric("Model Used", model_info)
+            
+            if model_info != 'Unknown':
+                model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
+                model_url = model_config.get('url')
+                if model_url:
+                    st.markdown(f"🔗 [View on Hugging Face]({model_url})")
+        
+        # Model Information Section
+        if model_info != 'Unknown':
+            with st.expander("📊 Model Information", expanded=False):
+                model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
+                if model_config:
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.write(f"**Description:** {model_config.get('description', 'N/A')}")
+                        st.write(f"**Model Type:** {model_config.get('model_type', 'N/A')}")
+                        st.write(f"**Dataset:** {model_config.get('dataset', 'N/A')}")
+                    
+                    with col2:
+                        performance = model_config.get('performance', {})
+                        if performance:
+                            st.write("**Performance Metrics:**")
+                            for metric, value in performance.items():
+                                if metric != 'dataset':
+                                    st.write(f"• {metric.upper()}: {value}")
+                    
+                    model_url = model_config.get('url')
+                    if model_url:
+                        st.markdown(f"🔗 **[View Model on Hugging Face]({model_url})**")
+        
+        # Additional details in table format
+        if result.get('details'):
+            st.subheader("Detailed Analysis")
+            
+            details_data = []
+            for key, value in result['details'].items():
+                if isinstance(value, dict):
+                    for sub_key, sub_value in value.items():
+                        details_data.append({
+                            "Property": f"{key.replace('_', ' ').title()} - {sub_key.replace('_', ' ').title()}",
+                            "Value": str(sub_value),
+                            "Category": key.replace('_', ' ').title()
+                        })
+                else:
+                    details_data.append({
+                        "Property": key.replace('_', ' ').title(),
+                        "Value": str(value),
+                        "Category": "General"
+                    })
+            
+            if details_data:
+                import pandas as pd
+                df = pd.DataFrame(details_data)
+                st.dataframe(
+                    df,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "Property": st.column_config.TextColumn(
+                            "Property",
+                            help="Predicted property name"
+                        ),
+                        "Value": st.column_config.TextColumn(
+                            "Value",
+                            help="Predicted value"
+                        ),
+                        "Category": st.column_config.TextColumn(
+                            "Category",
+                            help="Result category"
+                        )
+                    }
+                )
+
 def render_ai_analysis_section():
     """Render AI-powered analysis section for prediction results"""
     st.markdown("### 🤖 AI-Powered Analysis")
@@ -1073,8 +1192,17 @@ def render_ai_analysis_section():
                     "timestamp": datetime.now().isoformat()
                 })
                 
-                # Set flag to show results in separate container to avoid clearing prediction display
-                st.session_state.show_results_after_analysis = True
+                # Display the result immediately without rerun to preserve prediction results
+                st.success("Analysis completed!")
+                with st.expander(f"AI Analysis: {analysis_type}", expanded=True):
+                    st.markdown(f"**Analysis Type:** {analysis_type}")
+                    if user_question and analysis_type == "Ask Custom Question":
+                        st.markdown(f"**Question:** {user_question}")
+                    st.markdown(f"**AI Response:**")
+                    st.write(response)
+                    st.caption(f"Task: {task_type} | Generated: {datetime.now().strftime('%H:%M:%S')}")
+                    
+                # Don't use st.rerun() to preserve the prediction display
                 
             except Exception as e:
                 st.error(f"Analysis error: {str(e)}")
@@ -1083,21 +1211,16 @@ def render_ai_analysis_section():
     if hasattr(st.session_state, 'ai_analysis_history') and st.session_state.ai_analysis_history:
         st.markdown("### 📊 Analysis Results")
         
-        # Show the most recent analysis immediately if flag is set
-        if st.session_state.show_results_after_analysis:
-            latest_analysis = st.session_state.ai_analysis_history[-1]
-            st.success("AI Analysis completed!")
-            
-            with st.container():
-                st.markdown(f"**Analysis Type:** {latest_analysis['type']}")
-                if latest_analysis['question'] != latest_analysis['type']:
-                    st.markdown(f"**Question:** {latest_analysis['question']}")
-                st.markdown(f"**AI Response:**")
-                st.write(latest_analysis['results'])
-                st.caption(f"Task: {latest_analysis['task']} | Generated: {latest_analysis['timestamp']}")
-            
-            # Reset the flag
-            st.session_state.show_results_after_analysis = False
+        # Always show the most recent analysis at the top
+        latest_analysis = st.session_state.ai_analysis_history[-1]
+        
+        with st.container():
+            st.markdown(f"**Recent Analysis:** {latest_analysis['type']}")
+            if latest_analysis['question'] != latest_analysis['type']:
+                st.markdown(f"**Question:** {latest_analysis['question']}")
+            st.markdown(f"**AI Response:**")
+            st.write(latest_analysis['results'])
+            st.caption(f"Task: {latest_analysis['task']} | Generated: {latest_analysis['timestamp']}")
         
         # Show expandable history of all analyses
         with st.expander(f"Analysis History ({len(st.session_state.ai_analysis_history)} total)", expanded=False):
@@ -1112,7 +1235,8 @@ def render_ai_analysis_section():
         if st.button("🗑️ Clear Analysis History"):
             st.session_state.ai_analysis_history = []
             st.session_state.show_results_after_analysis = False
-            st.success("Analysis history cleared")
+            st.session_state.cached_prediction_display = None
+            st.rerun()
 
 def main():
     """Main application function"""
@@ -1132,6 +1256,8 @@ def main():
         render_admet_interface()
     elif st.session_state.current_task == "Similarity":
         render_similarity_interface()
+    
+
     
 
     
