@@ -598,8 +598,6 @@ def render_dti_interface():
                 result = st.session_state.prediction_tasks.predict_dti(drug_smiles, target_sequence)
                 
                 if result:
-                    st.success("DTI Prediction Completed")
-                    
                     # Store prediction results for AI analysis
                     st.session_state.prediction_results['DTI'] = result
                     
@@ -615,101 +613,6 @@ def render_dti_interface():
                         'details': result.get('details', {}),
                         'timestamp': datetime.now().isoformat()
                     }
-                    
-                    col1, col2, col3 = st.columns(3)
-                    
-                    with col1:
-                        score = result.get('score', 0.0)
-                        if isinstance(score, (int, float)):
-                            st.metric("Interaction Score", f"{score:.3f}")
-                        else:
-                            st.metric("Interaction Score", str(score))
-                    
-                    with col2:
-                        confidence = result.get('confidence')
-                        if confidence:
-                            st.metric("Confidence", f"{confidence*100:.1f}%")
-                        else:
-                            st.metric("Confidence", "N/A")
-                    
-                    with col3:
-                        model_info = result.get('model_info', 'Unknown')
-                        st.metric("Model Used", model_info)
-                        
-                        # Add model reference link
-                        if model_info != 'Unknown':
-                            model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
-                            model_url = model_config.get('url')
-                            if model_url:
-                                st.markdown(f"🔗 [View on Hugging Face]({model_url})", unsafe_allow_html=True)
-                    
-                    # Model Information Section
-                    if model_info != 'Unknown':
-                        with st.expander("📊 Model Information", expanded=False):
-                            model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
-                            if model_config:
-                                col1, col2 = st.columns(2)
-                                
-                                with col1:
-                                    st.write(f"**Description:** {model_config.get('description', 'N/A')}")
-                                    st.write(f"**Model Type:** {model_config.get('model_type', 'N/A')}")
-                                    st.write(f"**Dataset:** {model_config.get('dataset', 'N/A')}")
-                                
-                                with col2:
-                                    performance = model_config.get('performance', {})
-                                    if performance:
-                                        st.write("**Performance Metrics:**")
-                                        for metric, value in performance.items():
-                                            if metric != 'dataset':
-                                                st.write(f"• {metric.upper()}: {value}")
-                                
-                                model_url = model_config.get('url')
-                                if model_url:
-                                    st.markdown(f"🔗 **[View Model on Hugging Face]({model_url})**")
-                    
-                    # Additional details in table format
-                    if result.get('details'):
-                        st.subheader("Detailed Analysis")
-                        
-                        # Create a beautiful results table
-                        details_data = []
-                        for key, value in result['details'].items():
-                            if isinstance(value, dict):
-                                for sub_key, sub_value in value.items():
-                                    details_data.append({
-                                        "Property": f"{key.replace('_', ' ').title()} - {sub_key.replace('_', ' ').title()}",
-                                        "Value": str(sub_value),
-                                        "Category": key.replace('_', ' ').title()
-                                    })
-                            else:
-                                details_data.append({
-                                    "Property": key.replace('_', ' ').title(),
-                                    "Value": str(value),
-                                    "Category": "General"
-                                })
-                        
-                        if details_data:
-                            import pandas as pd
-                            df = pd.DataFrame(details_data)
-                            st.dataframe(
-                                df,
-                                use_container_width=True,
-                                hide_index=True,
-                                column_config={
-                                    "Property": st.column_config.TextColumn(
-                                        "Property",
-                                        help="Analysis parameter"
-                                    ),
-                                    "Value": st.column_config.TextColumn(
-                                        "Value",
-                                        help="Predicted or calculated value"
-                                    ),
-                                    "Category": st.column_config.TextColumn(
-                                        "Category",
-                                        help="Result category"
-                                    )
-                                }
-                            )
                 else:
                     st.error("Prediction failed. Please ensure a model is loaded.")
             
@@ -1254,14 +1157,11 @@ def main():
     elif st.session_state.current_task == "Similarity":
         render_similarity_interface()
     
-    # Re-display cached prediction results if AI analysis has been run
-    if (st.session_state.cached_prediction_display and 
-        hasattr(st.session_state, 'ai_analysis_history') and 
-        st.session_state.ai_analysis_history):
+    # Always display cached prediction results when available
+    if st.session_state.cached_prediction_display:
         
         cached = st.session_state.cached_prediction_display
         st.markdown("### 📊 Prediction Results")
-        st.info("Results preserved during AI analysis")
         
         if cached['task'] == 'DTI':
             st.success("DTI Prediction Completed")
@@ -1297,14 +1197,14 @@ def main():
                 with st.expander("📊 Model Information", expanded=False):
                     model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
                     if model_config:
-                        col1, col2 = st.columns(2)
+                        info_col1, info_col2 = st.columns(2)
                         
-                        with col1:
+                        with info_col1:
                             st.write(f"**Description:** {model_config.get('description', 'N/A')}")
                             st.write(f"**Model Type:** {model_config.get('model_type', 'N/A')}")
                             st.write(f"**Dataset:** {model_config.get('dataset', 'N/A')}")
                         
-                        with col2:
+                        with info_col2:
                             performance = model_config.get('performance', {})
                             if performance:
                                 st.write("**Performance Metrics:**")
