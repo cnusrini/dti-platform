@@ -67,10 +67,14 @@ st.markdown("""
         transform: translateY(-2px);
     }
     
-    /* Sophisticated button styling */
-    .stButton > button {
+    /* Sophisticated button styling with multiple selectors */
+    .stButton > button,
+    button[kind="primary"],
+    button[kind="secondary"],
+    .stButton button,
+    button {
         background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-        color: white !important;
+        color: #ffffff !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 0.75rem 2rem !important;
@@ -82,24 +86,53 @@ st.markdown("""
         font-size: 14px !important;
         line-height: 1.5 !important;
         text-decoration: none !important;
+        text-shadow: none !important;
     }
     
-    .stButton > button:hover {
+    .stButton > button *,
+    button[kind="primary"] *,
+    button[kind="secondary"] *,
+    .stButton button *,
+    button * {
+        color: #ffffff !important;
+    }
+    
+    .stButton > button:hover,
+    button[kind="primary"]:hover,
+    button[kind="secondary"]:hover,
+    .stButton button:hover,
+    button:hover {
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
         box-shadow: 0 8px 24px rgba(59, 130, 246, 0.32) !important;
         transform: translateY(-1px) !important;
-        color: white !important;
+        color: #ffffff !important;
     }
     
-    .stButton > button:focus {
-        color: white !important;
+    .stButton > button:hover *,
+    button[kind="primary"]:hover *,
+    button[kind="secondary"]:hover *,
+    .stButton button:hover *,
+    button:hover * {
+        color: #ffffff !important;
+    }
+    
+    .stButton > button:focus,
+    button[kind="primary"]:focus,
+    button[kind="secondary"]:focus,
+    .stButton button:focus,
+    button:focus {
+        color: #ffffff !important;
         background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
         outline: none !important;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
     }
     
-    .stButton > button:active {
-        color: white !important;
+    .stButton > button:active,
+    button[kind="primary"]:active,
+    button[kind="secondary"]:active,
+    .stButton button:active,
+    button:active {
+        color: #ffffff !important;
         background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
     }
     
