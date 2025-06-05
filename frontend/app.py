@@ -603,8 +603,18 @@ def render_dti_interface():
                     # Store prediction results for AI analysis
                     st.session_state.prediction_results['DTI'] = result
                     
-                    # Set preservation flag to maintain display during AI analysis
-                    st.session_state.preserve_prediction_results = True
+                    # Cache full prediction display data to preserve during AI analysis
+                    st.session_state.cached_prediction_display = {
+                        'task': 'DTI',
+                        'result': result,
+                        'drug_smiles': drug_smiles,
+                        'target_sequence': target_sequence,
+                        'model_info': result.get('model_info', 'Unknown'),
+                        'score': result.get('score', 0.0),
+                        'confidence': result.get('confidence'),
+                        'details': result.get('details', {}),
+                        'timestamp': datetime.now().isoformat()
+                    }
                     
                     col1, col2, col3 = st.columns(3)
                     
@@ -979,16 +989,16 @@ def render_similarity_interface():
             except Exception as e:
                 st.error(f"Search error: {str(e)}")
 
-def render_cached_prediction_results():
-    """Render cached prediction results to preserve during AI analysis"""
+def render_preserved_prediction_results():
+    """Render preserved prediction results after AI analysis"""
     if not st.session_state.cached_prediction_display:
         return
     
     cached = st.session_state.cached_prediction_display
-    result = cached['result']
     task = cached['task']
     
-    st.markdown("### 📊 Prediction Results (Preserved)")
+    st.markdown("### 📊 Prediction Results")
+    st.info("Results preserved during AI analysis")
     
     if task == 'DTI':
         st.success("DTI Prediction Completed")
@@ -996,21 +1006,21 @@ def render_cached_prediction_results():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            score = result.get('score', 0.0)
+            score = cached.get('score', 0.0)
             if isinstance(score, (int, float)):
                 st.metric("Interaction Score", f"{score:.3f}")
             else:
                 st.metric("Interaction Score", str(score))
         
         with col2:
-            confidence = result.get('confidence')
+            confidence = cached.get('confidence')
             if confidence:
                 st.metric("Confidence", f"{confidence*100:.1f}%")
             else:
                 st.metric("Confidence", "N/A")
         
         with col3:
-            model_info = result.get('model_info', 'Unknown')
+            model_info = cached.get('model_info', 'Unknown')
             st.metric("Model Used", model_info)
             
             if model_info != 'Unknown':
@@ -1044,11 +1054,12 @@ def render_cached_prediction_results():
                         st.markdown(f"🔗 **[View Model on Hugging Face]({model_url})**")
         
         # Additional details in table format
-        if result.get('details'):
+        details = cached.get('details', {})
+        if details:
             st.subheader("Detailed Analysis")
             
             details_data = []
-            for key, value in result['details'].items():
+            for key, value in details.items():
                 if isinstance(value, dict):
                     for sub_key, sub_value in value.items():
                         details_data.append({
@@ -1242,6 +1253,112 @@ def main():
         render_admet_interface()
     elif st.session_state.current_task == "Similarity":
         render_similarity_interface()
+    
+    # Re-display cached prediction results if AI analysis has been run
+    if (st.session_state.cached_prediction_display and 
+        hasattr(st.session_state, 'ai_analysis_history') and 
+        st.session_state.ai_analysis_history):
+        
+        cached = st.session_state.cached_prediction_display
+        st.markdown("### 📊 Prediction Results")
+        st.info("Results preserved during AI analysis")
+        
+        if cached['task'] == 'DTI':
+            st.success("DTI Prediction Completed")
+            
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                score = cached.get('score', 0.0)
+                if isinstance(score, (int, float)):
+                    st.metric("Interaction Score", f"{score:.3f}")
+                else:
+                    st.metric("Interaction Score", str(score))
+            
+            with col2:
+                confidence = cached.get('confidence')
+                if confidence:
+                    st.metric("Confidence", f"{confidence*100:.1f}%")
+                else:
+                    st.metric("Confidence", "N/A")
+            
+            with col3:
+                model_info = cached.get('model_info', 'Unknown')
+                st.metric("Model Used", model_info)
+                
+                if model_info != 'Unknown':
+                    model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
+                    model_url = model_config.get('url')
+                    if model_url:
+                        st.markdown(f"🔗 [View on Hugging Face]({model_url})")
+            
+            # Model Information Section
+            if model_info != 'Unknown':
+                with st.expander("📊 Model Information", expanded=False):
+                    model_config = MODEL_REGISTRY.get('DTI', {}).get(model_info, {})
+                    if model_config:
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.write(f"**Description:** {model_config.get('description', 'N/A')}")
+                            st.write(f"**Model Type:** {model_config.get('model_type', 'N/A')}")
+                            st.write(f"**Dataset:** {model_config.get('dataset', 'N/A')}")
+                        
+                        with col2:
+                            performance = model_config.get('performance', {})
+                            if performance:
+                                st.write("**Performance Metrics:**")
+                                for metric, value in performance.items():
+                                    if metric != 'dataset':
+                                        st.write(f"• {metric.upper()}: {value}")
+                        
+                        model_url = model_config.get('url')
+                        if model_url:
+                            st.markdown(f"🔗 **[View Model on Hugging Face]({model_url})**")
+            
+            # Additional details in table format
+            details = cached.get('details', {})
+            if details:
+                st.subheader("Detailed Analysis")
+                
+                details_data = []
+                for key, value in details.items():
+                    if isinstance(value, dict):
+                        for sub_key, sub_value in value.items():
+                            details_data.append({
+                                "Property": f"{key.replace('_', ' ').title()} - {sub_key.replace('_', ' ').title()}",
+                                "Value": str(sub_value),
+                                "Category": key.replace('_', ' ').title()
+                            })
+                    else:
+                        details_data.append({
+                            "Property": key.replace('_', ' ').title(),
+                            "Value": str(value),
+                            "Category": "General"
+                        })
+                
+                if details_data:
+                    import pandas as pd
+                    df = pd.DataFrame(details_data)
+                    st.dataframe(
+                        df,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "Property": st.column_config.TextColumn(
+                                "Property",
+                                help="Predicted property name"
+                            ),
+                            "Value": st.column_config.TextColumn(
+                                "Value",
+                                help="Predicted value"
+                            ),
+                            "Category": st.column_config.TextColumn(
+                                "Category",
+                                help="Result category"
+                            )
+                        }
+                    )
     
 
     
