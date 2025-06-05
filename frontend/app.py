@@ -44,10 +44,10 @@ st.markdown("""
     .main-header {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         color: white;
-        padding: 2rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 32px rgba(30, 41, 59, 0.12);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(30, 41, 59, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
@@ -310,19 +310,19 @@ def render_top_bar():
     """Render the top navigation bar"""
     st.markdown("""
     <div class="main-header">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <div>
-                <h1 style="margin: 0; font-size: 2.5rem; color: white; font-family: 'Inter', sans-serif; font-weight: 700;">🧬 PharmQAgentAI</h1>
-                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; color: #cbd5e1; font-family: 'Inter', sans-serif; font-weight: 400;">Advanced Therapeutic Intelligence Platform</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="flex: 1;">
+                <h1 style="margin: 0; font-size: 1.8rem; color: white; font-family: 'Inter', sans-serif; font-weight: 700; line-height: 1.2;">🧬 PharmQAgentAI</h1>
+                <p style="margin: 0.2rem 0 0 0; font-size: 0.9rem; color: #cbd5e1; font-family: 'Inter', sans-serif; font-weight: 400; opacity: 0.8;">Advanced Therapeutic Intelligence Platform</p>
             </div>
-            <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
-                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 12px; padding: 1rem 1.5rem; text-align: center; min-width: 120px;">
-                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.9rem; font-family: 'Inter', sans-serif;">Models Loaded</div>
-                    <div style="color: #60a5fa; font-size: 1.8rem; font-weight: 700; margin-top: 0.25rem;">{}</div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 8px; padding: 0.6rem 1rem; text-align: center; min-width: 90px;">
+                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.1rem;">Models</div>
+                    <div style="color: #60a5fa; font-size: 1.4rem; font-weight: 700; line-height: 1;">{}</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 12px; padding: 1rem 1.5rem; text-align: center; min-width: 100px;">
-                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.9rem; font-family: 'Inter', sans-serif;">System Status</div>
-                    <div style="color: {}; font-size: 1.2rem; font-weight: 600; margin-top: 0.25rem;">{}</div>
+                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 8px; padding: 0.6rem 1rem; text-align: center; min-width: 80px;">
+                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.1rem;">Status</div>
+                    <div style="color: {}; font-size: 1rem; font-weight: 600; line-height: 1;">{}</div>
                 </div>
             </div>
         </div>
