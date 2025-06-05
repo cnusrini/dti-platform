@@ -27,6 +27,155 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom CSS to match emedchainhub.com design
+st.markdown("""
+<style>
+    /* Main container styling */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-left: 3rem;
+        padding-right: 3rem;
+        background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+    }
+    
+    /* Header styling */
+    .main-header {
+        background: linear-gradient(135deg, #2E86AB 0%, #1e5a8a 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(46, 134, 171, 0.2);
+    }
+    
+    /* Card styling for sections */
+    .prediction-card {
+        background: white;
+        border: 1px solid #e1f0ff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #2E86AB;
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background: linear-gradient(135deg, #2E86AB 0%, #1e5a8a 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(46, 134, 171, 0.2);
+    }
+    
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #1e5a8a 0%, #2E86AB 100%);
+        box-shadow: 0 4px 12px rgba(46, 134, 171, 0.3);
+        transform: translateY(-1px);
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: linear-gradient(180deg, #f0f8ff 0%, #ffffff 100%);
+        border-right: 2px solid #e1f0ff;
+    }
+    
+    /* Metrics styling */
+    .metric-container {
+        background: white;
+        border: 1px solid #e1f0ff;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Table styling */
+    .stDataFrame {
+        border: 1px solid #e1f0ff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    /* Input field styling */
+    .stTextInput > div > div > input {
+        border: 2px solid #e1f0ff;
+        border-radius: 8px;
+        padding: 0.5rem;
+        background: #fafcff;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #2E86AB;
+        box-shadow: 0 0 8px rgba(46, 134, 171, 0.2);
+    }
+    
+    /* Success/Warning/Error styling */
+    .success-box {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border: 1px solid #28a745;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .warning-box {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .error-box {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border: 1px solid #dc3545;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    /* Medical theme accent colors */
+    .medical-accent {
+        color: #2E86AB;
+        font-weight: 600;
+    }
+    
+    /* Progress bar styling */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #2E86AB 0%, #1e5a8a 100%);
+    }
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        background: #f0f8ff;
+        border-radius: 8px;
+        padding: 0.2rem;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
+        border-radius: 6px;
+        color: #1E3A5F;
+        font-weight: 500;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: #2E86AB;
+        color: white;
+    }
+    
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stDeployButton {display:none;}
+</style>
+""", unsafe_allow_html=True)
+
 # Initialize session state
 if 'model_manager' not in st.session_state:
     st.session_state.model_manager = ModelManager()
@@ -47,25 +196,29 @@ if 'prediction_results' not in st.session_state:
 
 def render_top_bar():
     """Render the top navigation bar"""
-    col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
-    
-    with col1:
-        st.title("🧬 PharmQAgentAI")
-        st.caption("Therapeutic Intelligence Platform")
-    
-    with col2:
-        if st.session_state.model_manager:
-            loaded_count = len(st.session_state.model_manager.get_loaded_models())
-            st.metric("Loaded Models", loaded_count)
-    
-    with col3:
-        st.metric("Architecture", "Backend/Frontend")
-    
-    with col4:
-        if st.session_state.loaded_models:
-            st.success("🟢 Ready")
-        else:
-            st.warning("🟡 Standby")
+    st.markdown("""
+    <div class="main-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="margin: 0; font-size: 2.5rem; color: white;">🧬 PharmQAgentAI</h1>
+                <p style="margin: 0; font-size: 1.2rem; color: #e8f4f8; opacity: 0.9;">Therapeutic Intelligence Platform</p>
+            </div>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+                <div class="metric-container" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="color: white; font-weight: 600;">Models Loaded</div>
+                    <div style="color: #a8d8ea; font-size: 1.5rem;">{}</div>
+                </div>
+                <div class="metric-container" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="color: white; font-weight: 600;">Status</div>
+                    <div style="color: #90ee90; font-size: 1.2rem;">{}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """.format(
+        len(st.session_state.model_manager.get_loaded_models()) if st.session_state.model_manager else 0,
+        "Ready" if st.session_state.loaded_models else "Standby"
+    ), unsafe_allow_html=True)
 
 def render_sidebar():
     """Render the sidebar with task selection and model management"""
