@@ -15,7 +15,7 @@ class DrugDiscoveryAssistant(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Drug Discovery Assistant",
-            model_name="gemini-pro"
+            model_name="gemini-1.5-flash"
         )
         self.expertise_areas = [
             "Drug-target interactions",

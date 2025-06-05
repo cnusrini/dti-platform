@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class BaseAgent(ABC):
     """Base class for all PharmQAgentAI agents"""
     
-    def __init__(self, name: str, model_name: str = "gemini-pro"):
+    def __init__(self, name: str, model_name: str = "gemini-1.5-flash"):
         self.name = name
         self.model_name = model_name
         self._configure_genai()

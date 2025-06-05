@@ -16,7 +16,7 @@ class ResearchAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Research Agent",
-            model_name="gemini-pro"
+            model_name="gemini-1.5-flash"
         )
         
     def get_agent_context(self) -> str:
@@ -61,7 +61,7 @@ class AnalysisAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Analysis Agent", 
-            model_name="gemini-pro"
+            model_name="gemini-1.5-flash"
         )
         
     def get_agent_context(self) -> str:
@@ -106,7 +106,7 @@ class ValidationAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Validation Agent",
-            model_name="gemini-pro"
+            model_name="gemini-1.5-flash"
         )
         
     def get_agent_context(self) -> str:
@@ -151,7 +151,7 @@ class ReportingAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Reporting Agent",
-            model_name="gemini-pro"
+            model_name="gemini-1.5-flash"
         )
         
     def get_agent_context(self) -> str:
