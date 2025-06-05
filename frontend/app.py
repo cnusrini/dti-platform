@@ -568,6 +568,9 @@ def render_dti_interface():
                 if result:
                     st.success("DTI Prediction Completed")
                     
+                    # Store prediction results for AI analysis
+                    st.session_state.prediction_results['DTI'] = result
+                    
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
@@ -658,6 +661,10 @@ def render_dta_interface():
                 
                 if result:
                     st.success("DTA Prediction Completed")
+                    
+                    # Store prediction results for AI analysis
+                    st.session_state.prediction_results['DTA'] = result
+                    
                     score = result.get('score', 0.0)
                     st.metric(f"Predicted {affinity_type}", f"{score:.2f} nM" if isinstance(score, (int, float)) else str(score))
                 else:
@@ -690,6 +697,10 @@ def render_ddi_interface():
                 
                 if result:
                     st.success("DDI Prediction Completed")
+                    
+                    # Store prediction results for AI analysis
+                    st.session_state.prediction_results['DDI'] = result
+                    
                     score = result.get('score', 0.0)
                     if isinstance(score, (int, float)):
                         if score > 0.5:
@@ -724,6 +735,9 @@ def render_admet_interface():
                 
                 if result:
                     st.success("ADMET Prediction Completed")
+                    
+                    # Store prediction results for AI analysis
+                    st.session_state.prediction_results['ADMET'] = result
                     
                     if result.get('properties'):
                         st.subheader("ADMET Analysis Results")
@@ -879,6 +893,9 @@ def render_similarity_interface():
                 
                 if result:
                     st.success("Similarity Search Completed")
+                    
+                    # Store prediction results for AI analysis
+                    st.session_state.prediction_results['Similarity'] = result
                     
                     if result.get('similar_compounds'):
                         st.subheader("Similar Compounds Found")
