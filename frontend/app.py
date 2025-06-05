@@ -395,65 +395,6 @@ def render_sidebar():
     
     st.sidebar.divider()
     
-    # AI Assistant Section
-    st.sidebar.subheader("🤖 AI Assistant")
-    
-    # Check agent status
-    agent_status = agent_manager.get_agent_status()
-    
-    if agent_status.get('enabled', False):
-        st.sidebar.success("AI Assistant Active")
-        
-        # Quick chat interface
-        user_query = st.sidebar.text_area(
-            "Ask about drug discovery:",
-            placeholder="e.g., 'What affects bioavailability?'",
-            height=68,
-            key="sidebar_ai_query"
-        )
-        
-        if st.sidebar.button("💬 Ask", disabled=not user_query.strip(), use_container_width=True):
-            if user_query.strip():
-                with st.spinner("AI thinking..."):
-                    import asyncio
-                    
-                    try:
-                        loop = asyncio.new_event_loop()
-                        asyncio.set_event_loop(loop)
-                        response = loop.run_until_complete(
-                            agent_manager.process_drug_query(user_query.strip())
-                        )
-                        loop.close()
-                        
-                        # Add to chat history
-                        st.session_state.ai_chat_history.append({
-                            "user": user_query.strip(),
-                            "assistant": response.get('response', 'No response generated'),
-                            "timestamp": response.get('timestamp', '')
-                        })
-                        
-                        st.rerun()
-                        
-                    except Exception as e:
-                        st.sidebar.error(f"Error: {str(e)}")
-        
-        # Show last response
-        if st.session_state.ai_chat_history:
-            with st.sidebar.expander("Latest Response", expanded=True):
-                latest = st.session_state.ai_chat_history[-1]
-                st.write(f"**Q:** {latest['user'][:50]}...")
-                st.write(f"**A:** {latest['assistant'][:200]}...")
-        
-        if st.sidebar.button("🗑️ Clear Chat", use_container_width=True):
-            st.session_state.ai_chat_history = []
-            st.rerun()
-    
-    else:
-        st.sidebar.warning("AI Assistant Unavailable")
-        st.sidebar.info("Requires Google AI API key")
-    
-    st.sidebar.divider()
-    
     # Model selector for current task
     st.sidebar.subheader(f"{current_task} Models")
     
@@ -955,6 +896,140 @@ def render_similarity_interface():
             except Exception as e:
                 st.error(f"Search error: {str(e)}")
 
+def render_ai_analysis_section():
+    """Render AI-powered analysis section for prediction results"""
+    st.markdown("### 🤖 AI-Powered Analysis")
+    
+    # Check agent status
+    agent_status = agent_manager.get_agent_status()
+    
+    if not agent_status.get('enabled', False):
+        st.info("AI analysis requires Google AI API key configuration. Once enabled, get intelligent insights about your prediction results.")
+        return
+    
+    st.success("AI Analysis Available")
+    
+    # Get the current prediction results
+    current_results = st.session_state.prediction_results
+    task_type = st.session_state.current_task
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        # Analysis options
+        analysis_type = st.selectbox(
+            "Choose Analysis Type:",
+            [
+                "Explain Results",
+                "Clinical Interpretation", 
+                "Optimization Suggestions",
+                "Safety Assessment",
+                "Ask Custom Question"
+            ],
+            key="analysis_type"
+        )
+        
+        if analysis_type == "Ask Custom Question":
+            user_question = st.text_area(
+                "Ask about your results:",
+                placeholder="e.g., 'How can I improve the bioavailability of this compound?'",
+                height=80,
+                key="custom_analysis_question"
+            )
+        else:
+            user_question = None
+    
+    with col2:
+        st.markdown("**Available Data:**")
+        if current_results:
+            for task, results in current_results.items():
+                st.write(f"• {task}: {len(results) if isinstance(results, list) else 1} results")
+        else:
+            st.write("No prediction results available")
+    
+    # Analysis button
+    analyze_button = st.button(
+        f"🔍 Get AI {analysis_type}",
+        disabled=not current_results or (analysis_type == "Ask Custom Question" and not user_question),
+        type="primary",
+        use_container_width=True
+    )
+    
+    if analyze_button:
+        with st.spinner("AI is analyzing your results..."):
+            import asyncio
+            
+            try:
+                # Prepare analysis request
+                if analysis_type == "Ask Custom Question":
+                    analysis_prompt = user_question
+                else:
+                    analysis_prompt = f"Provide {analysis_type.lower()} for these {task_type} prediction results"
+                
+                # Run AI analysis
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                
+                if analysis_type in ["Explain Results", "Ask Custom Question"]:
+                    response = loop.run_until_complete(
+                        agent_manager.explain_results(task_type, current_results)
+                    )
+                else:
+                    response = loop.run_until_complete(
+                        agent_manager.process_drug_query(
+                            analysis_prompt, 
+                            {"prediction_results": current_results, "task_type": task_type}
+                        )
+                    )
+                    response = response.get('response', 'No analysis generated')
+                
+                loop.close()
+                
+                # Store analysis results
+                if 'ai_analysis_history' not in st.session_state:
+                    st.session_state.ai_analysis_history = []
+                
+                st.session_state.ai_analysis_history.append({
+                    "type": analysis_type,
+                    "question": user_question if analysis_type == "Ask Custom Question" else analysis_type,
+                    "results": response,
+                    "task": task_type,
+                    "timestamp": datetime.now().isoformat()
+                })
+                
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Analysis error: {str(e)}")
+    
+    # Display analysis history
+    if hasattr(st.session_state, 'ai_analysis_history') and st.session_state.ai_analysis_history:
+        st.markdown("### 📊 Analysis Results")
+        
+        # Show the most recent analysis
+        latest_analysis = st.session_state.ai_analysis_history[-1]
+        
+        with st.expander(f"Latest: {latest_analysis['type']}", expanded=True):
+            st.markdown(f"**Question/Type:** {latest_analysis['question']}")
+            st.markdown(f"**Analysis:**")
+            st.write(latest_analysis['results'])
+            st.caption(f"Task: {latest_analysis['task']} | Time: {latest_analysis['timestamp']}")
+        
+        # Show previous analyses
+        if len(st.session_state.ai_analysis_history) > 1:
+            with st.expander(f"Previous Analyses ({len(st.session_state.ai_analysis_history) - 1})"):
+                for i, analysis in enumerate(reversed(st.session_state.ai_analysis_history[:-1])):
+                    st.markdown(f"**{analysis['type']}:** {analysis['question'][:100]}...")
+                    st.write(analysis['results'][:200] + "..." if len(analysis['results']) > 200 else analysis['results'])
+                    st.caption(f"Task: {analysis['task']} | Time: {analysis['timestamp']}")
+                    if i < len(st.session_state.ai_analysis_history) - 2:
+                        st.divider()
+        
+        # Clear analysis history
+        if st.button("🗑️ Clear Analysis History"):
+            st.session_state.ai_analysis_history = []
+            st.rerun()
+
 def main():
     """Main application function"""
     render_top_bar()
@@ -973,6 +1048,11 @@ def main():
         render_admet_interface()
     elif st.session_state.current_task == "Similarity":
         render_similarity_interface()
+    
+    # AI Assistant - Contextual Analysis Section
+    if st.session_state.prediction_results:
+        st.divider()
+        render_ai_analysis_section()
     
     # Footer
     st.divider()
