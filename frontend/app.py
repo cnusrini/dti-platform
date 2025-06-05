@@ -543,10 +543,6 @@ def render_dti_interface():
             height=100,
             key="dti_drug_input"
         )
-        
-        if st.button("Use Sample Drug", key="sample_drug_dti"):
-            st.session_state.dti_drug_smiles = "CC(=O)OC1=CC=CC=C1C(=O)O"  # Aspirin
-            st.rerun()
     
     with col2:
         st.subheader("Target Input")
@@ -557,10 +553,6 @@ def render_dti_interface():
             height=100,
             key="dti_target_input"
         )
-        
-        if st.button("Use Sample Target", key="sample_target_dti"):
-            st.session_state.dti_target_sequence = "MKVLWAALLVTFLAGCQAKVEQAVETEPEPELRQQTEWQSGQRWELALGRFWDYLRWVQTLSEQVQEELLSSQVTQELRALMDETAQ"
-            st.rerun()
     
     # Prediction
     if st.button("Predict DTI", type="primary", disabled=not (drug_smiles and target_sequence)):
@@ -649,16 +641,10 @@ def render_dta_interface():
     
     with col1:
         drug_smiles = st.text_area("Drug SMILES", height=100, key="dta_drug_smiles")
-        if st.button("Use Sample Drug", key="sample_drug_dta"):
-            st.session_state.dta_drug_smiles = "CCO"  # Ethanol
-            st.rerun()
     
     with col2:
         target_sequence = st.text_area("Target Sequence", height=100, key="dta_target_sequence")
         affinity_type = st.selectbox("Affinity Type", ["IC50", "Kd", "Ki"])
-        if st.button("Use Sample Target", key="sample_target_dta"):
-            st.session_state.dta_target_sequence = "MKVLWAALLVTFLAGCQAKVEQAVETEPEPELR"
-            st.rerun()
     
     if st.button("Predict Binding Affinity", type="primary", disabled=not (drug_smiles and target_sequence)):
         with st.spinner("Calculating binding affinity..."):
@@ -685,16 +671,10 @@ def render_ddi_interface():
     with col1:
         st.subheader("Drug 1")
         drug1_smiles = st.text_area("Drug 1 SMILES", height=100, key="ddi_drug1_smiles")
-        if st.button("Use Sample Drug 1", key="sample_drug1_ddi"):
-            st.session_state.ddi_drug1_smiles = "CC(=O)OC1=CC=CC=C1C(=O)O"  # Aspirin
-            st.rerun()
     
     with col2:
         st.subheader("Drug 2")
         drug2_smiles = st.text_area("Drug 2 SMILES", height=100, key="ddi_drug2_smiles")
-        if st.button("Use Sample Drug 2", key="sample_drug2_ddi"):
-            st.session_state.ddi_drug2_smiles = "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"  # Ibuprofen
-            st.rerun()
     
     interaction_type = st.selectbox("Interaction Type", ["Synergistic", "Antagonistic", "Unknown"])
     
@@ -725,9 +705,6 @@ def render_admet_interface():
     st.info("Predict Absorption, Distribution, Metabolism, Excretion, and Toxicity properties")
     
     drug_smiles = st.text_area("Drug SMILES", height=100, key="admet_drug_smiles")
-    if st.button("Use Sample Drug", key="sample_drug_admet"):
-        st.session_state.admet_drug_smiles = "CN1CCC[C@H]1C2=CN=CC=C2"  # Nicotine
-        st.rerun()
     
     properties = st.multiselect(
         "Select ADMET Properties",
@@ -882,9 +859,6 @@ def render_similarity_interface():
     
     with col1:
         query_smiles = st.text_area("Query SMILES", height=100, key="sim_query_smiles")
-        if st.button("Use Sample Query", key="sample_query_sim"):
-            st.session_state.sim_query_smiles = "CC(C)(C)NCC(C1=CC(=C(C=C1)O)CO)O"  # Salbutamol
-            st.rerun()
     
     with col2:
         threshold = st.slider("Similarity Threshold", 0.0, 1.0, 0.7, 0.05)
