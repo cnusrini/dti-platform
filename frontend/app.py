@@ -30,149 +30,212 @@ st.set_page_config(
 # Custom CSS to match emedchainhub.com design
 st.markdown("""
 <style>
-    /* Main container styling */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    /* Reset and base styling */
     .main .block-container {
-        padding-top: 2rem;
-        padding-left: 3rem;
-        padding-right: 3rem;
-        background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+        padding: 1rem 2rem;
+        max-width: 1200px;
+        background: #f8fafc;
+        font-family: 'Inter', sans-serif;
     }
     
-    /* Header styling */
+    /* Dark professional header */
     .main-header {
-        background: linear-gradient(135deg, #2E86AB 0%, #1e5a8a 100%);
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         color: white;
         padding: 2rem;
-        border-radius: 12px;
+        border-radius: 16px;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(46, 134, 171, 0.2);
+        box-shadow: 0 8px 32px rgba(30, 41, 59, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    /* Card styling for sections */
+    /* Modern card design */
     .prediction-card {
         background: white;
-        border: 1px solid #e1f0ff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin: 1rem 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-left: 4px solid #2E86AB;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
     }
     
-    /* Button styling */
+    .prediction-card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+    
+    /* Sophisticated button styling */
     .stButton > button {
-        background: linear-gradient(135deg, #2E86AB 0%, #1e5a8a 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
         border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1.5rem;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
         font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.025em;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(46, 134, 171, 0.2);
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.24);
     }
     
     .stButton > button:hover {
-        background: linear-gradient(135deg, #1e5a8a 0%, #2E86AB 100%);
-        box-shadow: 0 4px 12px rgba(46, 134, 171, 0.3);
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.32);
         transform: translateY(-1px);
     }
     
-    /* Sidebar styling */
+    /* Sidebar with modern design */
     .css-1d391kg {
-        background: linear-gradient(180deg, #f0f8ff 0%, #ffffff 100%);
-        border-right: 2px solid #e1f0ff;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        border-right: 1px solid #e2e8f0;
     }
     
-    /* Metrics styling */
+    /* Enhanced metrics */
     .metric-container {
         background: white;
-        border: 1px solid #e1f0ff;
-        border-radius: 10px;
-        padding: 1rem;
-        margin: 0.5rem 0;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 0.75rem 0;
         text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
     }
     
-    /* Table styling */
+    .metric-container:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Professional table styling */
     .stDataFrame {
-        border: 1px solid #e1f0ff;
-        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
     }
     
-    /* Input field styling */
-    .stTextInput > div > div > input {
-        border: 2px solid #e1f0ff;
+    /* Modern input fields */
+    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        background: white;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus, .stTextArea > div > div > textarea:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 16px rgba(59, 130, 246, 0.12);
+        outline: none;
+    }
+    
+    /* Status indicators */
+    .success-indicator {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.5rem 1rem;
         border-radius: 8px;
-        padding: 0.5rem;
-        background: #fafcff;
-    }
-    
-    .stTextInput > div > div > input:focus {
-        border-color: #2E86AB;
-        box-shadow: 0 0 8px rgba(46, 134, 171, 0.2);
-    }
-    
-    /* Success/Warning/Error styling */
-    .success-box {
-        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-        border: 1px solid #28a745;
-        border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
-    }
-    
-    .warning-box {
-        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-        border: 1px solid #ffc107;
-        border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
-    }
-    
-    .error-box {
-        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        border: 1px solid #dc3545;
-        border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
-    }
-    
-    /* Medical theme accent colors */
-    .medical-accent {
-        color: #2E86AB;
         font-weight: 600;
+        display: inline-block;
     }
     
-    /* Progress bar styling */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #2E86AB 0%, #1e5a8a 100%);
-    }
-    
-    /* Tab styling */
-    .stTabs [data-baseweb="tab-list"] {
-        background: #f0f8ff;
+    .warning-indicator {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        padding: 0.5rem 1rem;
         border-radius: 8px;
-        padding: 0.2rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .error-indicator {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    /* Progress bars */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+        border-radius: 8px;
+    }
+    
+    /* Modern tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        background: white;
+        border-radius: 12px;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
-        border-radius: 6px;
-        color: #1E3A5F;
+        border-radius: 8px;
+        color: #64748b;
         font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
     }
     
     .stTabs [aria-selected="true"] {
-        background: #2E86AB;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.24);
     }
     
-    /* Hide Streamlit branding */
+    /* Select boxes */
+    .stSelectbox > div > div {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: white;
+    }
+    
+    /* Typography */
+    h1, h2, h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    
+    p, div {
+        font-family: 'Inter', sans-serif;
+        color: #475569;
+    }
+    
+    /* Professional accent */
+    .professional-accent {
+        color: #3b82f6;
+        font-weight: 600;
+    }
+    
+    /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    .stDeployButton {display:none;}
+    .stDeployButton {display: none;}
+    header {visibility: hidden;}
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding: 1rem;
+        }
+        .main-header {
+            padding: 1.5rem;
+        }
+        .prediction-card {
+            padding: 1.5rem;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -198,25 +261,26 @@ def render_top_bar():
     """Render the top navigation bar"""
     st.markdown("""
     <div class="main-header">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
             <div>
-                <h1 style="margin: 0; font-size: 2.5rem; color: white;">🧬 PharmQAgentAI</h1>
-                <p style="margin: 0; font-size: 1.2rem; color: #e8f4f8; opacity: 0.9;">Therapeutic Intelligence Platform</p>
+                <h1 style="margin: 0; font-size: 2.5rem; color: white; font-family: 'Inter', sans-serif; font-weight: 700;">🧬 PharmQAgentAI</h1>
+                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; color: #cbd5e1; font-family: 'Inter', sans-serif; font-weight: 400;">Advanced Therapeutic Intelligence Platform</p>
             </div>
-            <div style="display: flex; gap: 2rem; align-items: center;">
-                <div class="metric-container" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                    <div style="color: white; font-weight: 600;">Models Loaded</div>
-                    <div style="color: #a8d8ea; font-size: 1.5rem;">{}</div>
+            <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 12px; padding: 1rem 1.5rem; text-align: center; min-width: 120px;">
+                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.9rem; font-family: 'Inter', sans-serif;">Models Loaded</div>
+                    <div style="color: #60a5fa; font-size: 1.8rem; font-weight: 700; margin-top: 0.25rem;">{}</div>
                 </div>
-                <div class="metric-container" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                    <div style="color: white; font-weight: 600;">Status</div>
-                    <div style="color: #90ee90; font-size: 1.2rem;">{}</div>
+                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 12px; padding: 1rem 1.5rem; text-align: center; min-width: 100px;">
+                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.9rem; font-family: 'Inter', sans-serif;">System Status</div>
+                    <div style="color: {}; font-size: 1.2rem; font-weight: 600; margin-top: 0.25rem;">{}</div>
                 </div>
             </div>
         </div>
     </div>
     """.format(
         len(st.session_state.model_manager.get_loaded_models()) if st.session_state.model_manager else 0,
+        "#10b981" if st.session_state.loaded_models else "#f59e0b",
         "Ready" if st.session_state.loaded_models else "Standby"
     ), unsafe_allow_html=True)
 
