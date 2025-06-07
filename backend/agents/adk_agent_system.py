@@ -9,16 +9,13 @@ from typing import Dict, Any, List, Optional, AsyncGenerator
 import asyncio
 from datetime import datetime
 
-# Google ADK imports
-from google_adk import Agent, AgentContext, AgentResponse
-from google_adk.tools import Tool
-from google_adk.engines import GenerativeEngine
-from google_adk.memory import ConversationMemory
-from google_adk.orchestration import MultiAgentOrchestrator
+# Google AI imports for enhanced agent capabilities
+import google.genai as genai
+from google.cloud import aiplatform
 
 logger = logging.getLogger(__name__)
 
-class DrugDiscoveryTool(Tool):
+class DrugDiscoveryTool:
     """Custom tool for drug discovery analysis"""
     
     def __init__(self):
