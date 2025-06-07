@@ -14,6 +14,7 @@ GOOGLE_AI_AVAILABLE = bool(os.getenv('GOOGLE_AI_API_KEY'))
 if GOOGLE_AI_AVAILABLE:
     try:
         from .simplified_ai_system import SimplifiedAISystem
+        from .collaborative_intelligence_system import ComprehensiveADKSystem
         AI_AGENTS_ENABLED = True
     except ImportError as e:
         logging.warning(f"AI agents disabled due to import error: {e}")
@@ -31,11 +32,17 @@ class AgentManager:
         
         if self.agents_enabled:
             try:
-                self.ai_system = SimplifiedAISystem()
-                logger.info("AI agents initialized with simplified system")
+                # Initialize comprehensive ADK system with all capabilities
+                self.ai_system = ComprehensiveADKSystem()
+                logger.info("AI agents initialized with comprehensive ADK system")
             except Exception as e:
-                logger.error(f"Failed to initialize AI agents: {e}")
-                self.agents_enabled = False
+                logger.error(f"Failed to initialize comprehensive system, falling back to simplified: {e}")
+                try:
+                    self.ai_system = SimplifiedAISystem()
+                    logger.info("AI agents initialized with simplified system")
+                except Exception as e2:
+                    logger.error(f"Failed to initialize any AI system: {e2}")
+                    self.agents_enabled = False
         
         if not self.agents_enabled:
             logger.warning("AI agents are disabled - Google AI API key required")
