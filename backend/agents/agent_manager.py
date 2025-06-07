@@ -16,6 +16,7 @@ if GOOGLE_AI_AVAILABLE:
         import google.generativeai as genai
         from .drug_discovery_assistant import DrugDiscoveryAssistant
         from .research_orchestrator import ResearchOrchestrator
+        from .google_agent_builder import GoogleAgentBuilder
         AI_AGENTS_ENABLED = True
     except ImportError as e:
         logging.warning(f"AI agents disabled due to import error: {e}")
@@ -35,7 +36,8 @@ class AgentManager:
             try:
                 self.drug_discovery_assistant = DrugDiscoveryAssistant()
                 self.research_orchestrator = ResearchOrchestrator()
-                logger.info("AI agents initialized successfully")
+                self.google_agent_builder = GoogleAgentBuilder()
+                logger.info("AI agents initialized successfully with Google Agent Builder")
             except Exception as e:
                 logger.error(f"Failed to initialize AI agents: {e}")
                 self.agents_enabled = False
@@ -103,10 +105,18 @@ class AgentManager:
             }
         
         try:
-            result = await self.research_orchestrator.orchestrate_research(
-                compound_data, prediction_results
-            )
-            return result
+            # Use enhanced Google Agent Builder for advanced orchestration
+            if hasattr(self, 'google_agent_builder'):
+                result = await self.google_agent_builder.orchestrate_multi_agent_research(
+                    compound_data, prediction_results
+                )
+                return result
+            else:
+                # Fallback to standard orchestrator
+                result = await self.research_orchestrator.orchestrate_research(
+                    compound_data, prediction_results
+                )
+                return result
         except Exception as e:
             logger.error(f"Error in research orchestration: {e}")
             return {
