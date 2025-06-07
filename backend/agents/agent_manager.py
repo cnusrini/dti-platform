@@ -17,7 +17,7 @@ if GOOGLE_AI_AVAILABLE:
         from .drug_discovery_assistant import DrugDiscoveryAssistant
         from .research_orchestrator import ResearchOrchestrator
         from .google_agent_builder import GoogleAgentBuilder
-        from .enhanced_adk_system import EnhancedADKSystem
+        from .working_google_ai_system import WorkingGoogleAISystem
         AI_AGENTS_ENABLED = True
     except ImportError as e:
         logging.warning(f"AI agents disabled due to import error: {e}")
@@ -38,7 +38,7 @@ class AgentManager:
                 self.drug_discovery_assistant = DrugDiscoveryAssistant()
                 self.research_orchestrator = ResearchOrchestrator()
                 self.google_agent_builder = GoogleAgentBuilder()
-                self.enhanced_adk_system = EnhancedADKSystem()
+                self.working_google_ai_system = WorkingGoogleAISystem()
                 logger.info("AI agents initialized successfully with Enhanced Google AI integration")
             except Exception as e:
                 logger.error(f"Failed to initialize AI agents: {e}")
@@ -107,9 +107,9 @@ class AgentManager:
             }
         
         try:
-            # Use Enhanced ADK system for advanced orchestration
-            if hasattr(self, 'enhanced_adk_system') and self.enhanced_adk_system.is_available():
-                result = await self.enhanced_adk_system.orchestrate_multi_agent_analysis(
+            # Use Working Google AI system for advanced orchestration
+            if hasattr(self, 'working_google_ai_system') and self.working_google_ai_system.is_available():
+                result = await self.working_google_ai_system.orchestrate_comprehensive_analysis(
                     compound_data, prediction_results
                 )
                 return result
