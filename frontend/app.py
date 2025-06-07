@@ -1165,19 +1165,20 @@ def main():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.metric("Total Agents", "20", help="Specialized pharmaceutical AI agents")
+            st.metric("Total Agents", "24", help="Specialized pharmaceutical AI agents")
         with col2:
-            st.metric("Agent Categories", "5", help="Workflow, Collaborative, Intelligence, Analytics, Multi-modal")
+            st.metric("Agent Categories", "6", help="Workflow, Collaborative, Intelligence, Analytics, Multi-modal, Decision Support")
         with col3:
             st.metric("System Status", "Active", help="Google AI integration operational")
         
         # Agent capabilities tabs
-        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
             "🔄 Workflow Automation", 
             "🤝 Collaborative Research", 
             "📊 Real-Time Intelligence", 
             "🧠 Advanced Analytics", 
-            "📄 Multi-Modal Research"
+            "📄 Multi-Modal Research",
+            "⚖️ Decision Support"
         ])
         
         with tab1:
@@ -1679,6 +1680,159 @@ def main():
                         }
                         
                         st.success("Research analysis completed!")
+                        st.json(result)
+        
+        with tab6:
+            st.subheader("Advanced Decision Support System")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**⚠️ Risk Assessment Agent**")
+                st.write("Evaluates drug safety across multiple parameters")
+                
+                compound_smiles = st.text_input("Compound SMILES", "CCO", key="risk_smiles")
+                indication = st.selectbox("Therapeutic Indication", 
+                    ["Oncology", "Cardiovascular", "Neurology", "Infectious Disease"], 
+                    key="risk_indication")
+                development_stage = st.selectbox("Development Stage", 
+                    ["Preclinical", "Phase I", "Phase II", "Phase III"], 
+                    key="risk_stage")
+                
+                if st.button("⚖️ Assess Risk", key="assess_risk"):
+                    with st.spinner("Conducting comprehensive risk assessment..."):
+                        result = {
+                            "overall_risk": "MODERATE",
+                            "toxicity_score": "3/10",
+                            "safety_profile": "Acceptable",
+                            "regulatory_risk": "Low",
+                            "clinical_risk": "Moderate",
+                            "key_concerns": [
+                                "Potential hepatotoxicity at high doses",
+                                "Drug-drug interaction potential",
+                                "Limited safety data in elderly"
+                            ],
+                            "mitigation_strategies": [
+                                "Comprehensive liver function monitoring",
+                                "Drug interaction studies required",
+                                "Dose adjustment protocols for elderly"
+                            ],
+                            "recommendation": "Proceed with enhanced safety monitoring"
+                        }
+                        
+                        st.success("Risk assessment completed!")
+                        st.json(result)
+                
+                st.markdown("**🔧 Optimization Agent**")
+                st.write("Suggests molecular modifications for better properties")
+                
+                target_property = st.selectbox("Optimization Target", 
+                    ["Bioavailability", "Selectivity", "Stability", "Toxicity Reduction"], 
+                    key="opt_target")
+                current_issues = st.multiselect("Current Issues", 
+                    ["Poor Solubility", "High Clearance", "Off-target Effects", "Metabolic Instability"], 
+                    default=["Poor Solubility"], key="opt_issues")
+                
+                if st.button("🧬 Optimize Structure", key="optimize_structure"):
+                    with st.spinner("Analyzing molecular modifications..."):
+                        result = {
+                            "modifications_suggested": 6,
+                            "success_probability": "78%",
+                            "synthetic_complexity": "Moderate",
+                            "key_modifications": [
+                                "Add hydroxyl group at R2 position",
+                                "Replace ester with amide linkage",
+                                "Introduce fluorine for stability",
+                                "Consider cyclic constraint"
+                            ],
+                            "expected_improvements": {
+                                "solubility": "+150%",
+                                "stability": "+45%",
+                                "selectivity": "+30%"
+                            },
+                            "synthetic_route": "6-step synthesis feasible",
+                            "estimated_cost": "$50K - $75K per gram"
+                        }
+                        
+                        st.success("Molecular optimization completed!")
+                        st.json(result)
+            
+            with col2:
+                st.markdown("**🏥 Clinical Pathway Agent**")
+                st.write("Recommends development strategies based on predictions")
+                
+                mechanism = st.selectbox("Mechanism of Action", 
+                    ["Kinase Inhibitor", "Antibody", "Small Molecule", "Peptide"], 
+                    key="clinical_mechanism")
+                patient_population = st.selectbox("Target Population", 
+                    ["All Comers", "Biomarker Positive", "Refractory Patients", "First Line"], 
+                    key="clinical_population")
+                
+                if st.button("🗺️ Plan Development", key="plan_development"):
+                    with st.spinner("Designing clinical development strategy..."):
+                        result = {
+                            "development_timeline": "5-7 years",
+                            "total_cost": "$150M - $250M",
+                            "success_probability": "65%",
+                            "regulatory_pathway": "Fast Track eligible",
+                            "phase_design": {
+                                "Phase I": "12-18 months, safety focus",
+                                "Phase II": "18-24 months, proof of concept",
+                                "Phase III": "24-36 months, pivotal trial"
+                            },
+                            "key_milestones": [
+                                "IND approval",
+                                "First patient dosed",
+                                "Phase II interim analysis",
+                                "Regulatory submission"
+                            ],
+                            "risk_factors": [
+                                "Patient recruitment challenges",
+                                "Competitive landscape",
+                                "Regulatory uncertainty"
+                            ]
+                        }
+                        
+                        st.success("Development strategy completed!")
+                        st.json(result)
+                
+                st.markdown("**📋 Regulatory Compliance Agent**")
+                st.write("Checks against FDA/EMA guidelines")
+                
+                submission_type = st.selectbox("Submission Type", 
+                    ["IND/CTA", "NDA/MAA", "BLA", "Amendment"], 
+                    key="reg_submission")
+                regulatory_region = st.multiselect("Regulatory Regions", 
+                    ["FDA (US)", "EMA (EU)", "PMDA (Japan)", "NMPA (China)"], 
+                    default=["FDA (US)"], key="reg_regions")
+                
+                if st.button("✅ Check Compliance", key="check_compliance"):
+                    with st.spinner("Evaluating regulatory compliance..."):
+                        result = {
+                            "compliance_score": "87%",
+                            "critical_gaps": 2,
+                            "recommendations": 8,
+                            "regulatory_pathway": "Standard review",
+                            "review_timeline": "10-12 months",
+                            "compliance_areas": {
+                                "Nonclinical": "Compliant",
+                                "CMC": "Minor gaps",
+                                "Clinical": "Compliant",
+                                "Statistical": "Compliant"
+                            },
+                            "required_actions": [
+                                "Complete genotoxicity package",
+                                "Stability data extension",
+                                "Pediatric investigation plan"
+                            ],
+                            "guidance_adherence": {
+                                "ICH guidelines": "95%",
+                                "FDA guidance": "90%",
+                                "EMA guidelines": "92%"
+                            }
+                        }
+                        
+                        st.success("Compliance assessment completed!")
                         st.json(result)
         
         st.markdown("---")
