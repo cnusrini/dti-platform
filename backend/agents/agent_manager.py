@@ -110,23 +110,17 @@ class AgentManager:
             }
         
         try:
-            # Use Working Google AI system for advanced orchestration
-            if hasattr(self, 'working_google_ai_system') and self.working_google_ai_system.is_available():
-                result = await self.working_google_ai_system.orchestrate_comprehensive_analysis(
-                    compound_data, prediction_results
-                )
-                return result
-            elif hasattr(self, 'google_agent_builder'):
-                result = await self.google_agent_builder.orchestrate_multi_agent_research(
+            if hasattr(self, 'ai_system') and self.ai_system.is_available():
+                result = await self.ai_system.orchestrate_comprehensive_analysis(
                     compound_data, prediction_results
                 )
                 return result
             else:
-                # Fallback to standard orchestrator
-                result = await self.research_orchestrator.orchestrate_research(
-                    compound_data, prediction_results
-                )
-                return result
+                return {
+                    "error": "AI system not available",
+                    "report": "Multi-agent research requires Google AI API key configuration",
+                    "timestamp": self._get_timestamp()
+                }
         except Exception as e:
             logger.error(f"Error in research orchestration: {e}")
             return {
@@ -141,10 +135,11 @@ class AgentManager:
             return "AI explanation not available - requires Google AI API key configuration."
         
         try:
-            explanation = await self.drug_discovery_assistant.explain_prediction_results(
-                prediction_type, results
-            )
-            return explanation
+            if hasattr(self, 'ai_system') and self.ai_system.is_available():
+                explanation = await self.ai_system.explain_results_ai(prediction_type, results)
+                return explanation
+            else:
+                return "AI explanation requires Google AI API key configuration."
         except Exception as e:
             logger.error(f"Error explaining results: {e}")
             return f"Error generating explanation: {str(e)}"
@@ -159,18 +154,24 @@ class AgentManager:
             }
         
         try:
-            return {
-                "enabled": True,
-                "agents": {
-                    "drug_discovery_assistant": {
-                        "name": self.drug_discovery_assistant.name,
-                        "capabilities": self.drug_discovery_assistant.get_capabilities()
-                    },
-                    "research_orchestrator": {
-                        "available_agents": list(self.research_orchestrator.agents.keys())
+            if hasattr(self, 'ai_system'):
+                status = self.ai_system.get_system_status()
+                return {
+                    "enabled": True,
+                    "system_type": status.get("system_type", "simplified_ai_agents"),
+                    "capabilities": status.get("capabilities", []),
+                    "agents": {
+                        "research_agent": "Drug Discovery Researcher",
+                        "analysis_agent": "Molecular Analyst", 
+                        "safety_agent": "Clinical Safety Validator"
                     }
                 }
-            }
+            else:
+                return {
+                    "enabled": True,
+                    "system_type": "basic_agent_system",
+                    "agents": {}
+                }
         except Exception as e:
             return {
                 "enabled": False,
