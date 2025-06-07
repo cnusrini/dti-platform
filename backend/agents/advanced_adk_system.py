@@ -568,10 +568,23 @@ class AdvancedADKSystem:
     async def explain_results_enhanced(self, prediction_type: str, results: Dict) -> str:
         """Generate enhanced explanations using synthesis agent"""
         if "synthesis" in self.agents:
-            explanation_result = await self.agents["synthesis"].synthesize_predictions({prediction_type: results})
+            # Convert datetime objects to strings to avoid JSON serialization errors
+            serializable_results = self._make_json_serializable(results)
+            explanation_result = await self.agents["synthesis"].synthesize_predictions({prediction_type: serializable_results})
             return explanation_result.get("response", "Enhanced explanation not available")
         else:
             return f"Enhanced explanation for {prediction_type} predictions not available"
+    
+    def _make_json_serializable(self, obj):
+        """Convert objects to JSON-serializable format"""
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        elif isinstance(obj, dict):
+            return {key: self._make_json_serializable(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self._make_json_serializable(item) for item in obj]
+        else:
+            return obj
     
     def get_system_status(self) -> Dict[str, Any]:
         """Get status of all agents in the advanced system"""
