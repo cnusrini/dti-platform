@@ -17,6 +17,7 @@ if GOOGLE_AI_AVAILABLE:
         from .drug_discovery_assistant import DrugDiscoveryAssistant
         from .research_orchestrator import ResearchOrchestrator
         from .google_agent_builder import GoogleAgentBuilder
+        from .adk_agent_system import ADKAgentSystem
         AI_AGENTS_ENABLED = True
     except ImportError as e:
         logging.warning(f"AI agents disabled due to import error: {e}")
@@ -37,7 +38,8 @@ class AgentManager:
                 self.drug_discovery_assistant = DrugDiscoveryAssistant()
                 self.research_orchestrator = ResearchOrchestrator()
                 self.google_agent_builder = GoogleAgentBuilder()
-                logger.info("AI agents initialized successfully with Google Agent Builder")
+                self.adk_agent_system = ADKAgentSystem()
+                logger.info("AI agents initialized successfully with Google ADK integration")
             except Exception as e:
                 logger.error(f"Failed to initialize AI agents: {e}")
                 self.agents_enabled = False

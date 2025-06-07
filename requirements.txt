@@ -12,3 +12,4 @@ google-generativeai
 langchain
 langchain-google-genai
 google-generativeai
+google-adk
