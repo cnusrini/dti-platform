@@ -13,11 +13,7 @@ GOOGLE_AI_AVAILABLE = bool(os.getenv('GOOGLE_AI_API_KEY'))
 
 if GOOGLE_AI_AVAILABLE:
     try:
-        import google.generativeai as genai
-        from .drug_discovery_assistant import DrugDiscoveryAssistant
-        from .research_orchestrator import ResearchOrchestrator
-        from .google_agent_builder import GoogleAgentBuilder
-        from .working_google_ai_system import WorkingGoogleAISystem
+        from .simplified_ai_system import SimplifiedAISystem
         AI_AGENTS_ENABLED = True
     except ImportError as e:
         logging.warning(f"AI agents disabled due to import error: {e}")
@@ -35,11 +31,8 @@ class AgentManager:
         
         if self.agents_enabled:
             try:
-                self.drug_discovery_assistant = DrugDiscoveryAssistant()
-                self.research_orchestrator = ResearchOrchestrator()
-                self.google_agent_builder = GoogleAgentBuilder()
-                self.working_google_ai_system = WorkingGoogleAISystem()
-                logger.info("AI agents initialized successfully with Enhanced Google AI integration")
+                self.ai_system = SimplifiedAISystem()
+                logger.info("AI agents initialized with simplified system")
             except Exception as e:
                 logger.error(f"Failed to initialize AI agents: {e}")
                 self.agents_enabled = False
@@ -62,8 +55,15 @@ class AgentManager:
             }
         
         try:
-            result = await self.drug_discovery_assistant.process_drug_query(query, compound_data)
-            return result
+            if hasattr(self, 'ai_system') and self.ai_system.is_available():
+                result = await self.ai_system.process_drug_discovery_query(query, compound_data)
+                return result
+            else:
+                return {
+                    "error": "AI system not available",
+                    "response": "AI assistant requires Google AI API key configuration",
+                    "timestamp": self._get_timestamp()
+                }
         except Exception as e:
             logger.error(f"Error processing drug query: {e}")
             return {
@@ -83,12 +83,15 @@ class AgentManager:
             }
         
         try:
-            # Get compound analysis from assistant
-            analysis_result = await self.drug_discovery_assistant.analyze_compound_properties(
-                smiles, prediction_results
-            )
-            
-            return analysis_result
+            if hasattr(self, 'ai_system') and self.ai_system.is_available():
+                result = await self.ai_system.analyze_compound_with_ai(smiles, prediction_results)
+                return result
+            else:
+                return {
+                    "error": "AI system not available",
+                    "analysis": "AI assistant requires Google AI API key configuration",
+                    "timestamp": self._get_timestamp()
+                }
         except Exception as e:
             logger.error(f"Error in compound analysis: {e}")
             return {
