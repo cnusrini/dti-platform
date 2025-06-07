@@ -1683,40 +1683,6 @@ def main():
         
         st.markdown("---")
         st.info("💡 **Integration Note**: All agents work seamlessly with the existing prediction models. Use the 'Get AI Explain Results' button after running any prediction to automatically engage the most relevant agents for comprehensive analysis.")
-            
-            st.markdown("""
-            Your PharmQAgentAI platform now includes 20 specialized Google AI agents across 5 categories:
-            
-            **🔄 Workflow Automation (4 agents)**
-            - Drug Pipeline Agent: End-to-end workflow orchestration
-            - Data Collection Agent: Multi-source molecular data aggregation  
-            - Quality Control Agent: Molecular data validation
-            - Results Synthesis Agent: Multi-model prediction integration
-            
-            **🤝 Collaborative Research (4 agents)**
-            - Knowledge Base Agent: Dynamic pharmaceutical knowledge curation
-            - Collaboration Agent: Multi-stakeholder project coordination
-            - Version Control Agent: Research progress tracking
-            - Publication Agent: Scientific writing support
-            
-            **📊 Real-Time Intelligence (3 agents)**
-            - Market Analysis Agent: Competitive landscape monitoring
-            - Patent Search Agent: IP landscape analysis
-            - Clinical Trial Agent: Ongoing studies tracking
-            
-            **🧠 Advanced Analytics (3 agents)**
-            - Pattern Recognition Agent: Cross-dataset trend identification
-            - Prediction Ensemble Agent: Multi-model accuracy optimization
-            - Biomarker Discovery Agent: Therapeutic target identification
-            
-            **📄 Multi-Modal Research (3 agents)**
-            - Document Processing Agent: Scientific literature analysis
-            - Visual Explanation Agent: Molecular interaction diagrams
-            - Research Analysis Agent: Comprehensive literature processing
-            """)
-            
-            st.success("All agents are integrated and available through the existing AI analysis features!")
-            st.info("Use the 'Get AI Explain Results' button after making predictions to access these advanced capabilities.")
     
     # Always display cached prediction results when available
     if st.session_state.cached_prediction_display:
