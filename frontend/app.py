@@ -1595,22 +1595,53 @@ def main():
                 
                 if st.button("🔎 Recognize Patterns", key="recognize_patterns"):
                     with st.spinner("Analyzing patterns across datasets..."):
-                        result = {
-                            "patterns_identified": 15,
-                            "confidence_threshold": "85%",
-                            "key_discoveries": [
-                                "Molecular weight correlation with efficacy",
-                                "Hydrophobicity predicts brain penetration",
-                                "Specific scaffold linked to cardiotoxicity"
-                            ],
-                            "predictive_models": "3 new models generated",
-                            "validation_accuracy": "92.4%",
-                            "cross_dataset_validation": "Successful",
-                            "actionable_insights": "8 recommendations"
-                        }
+                        st.success("🎯 Pattern Recognition Complete!")
                         
-                        st.success("Pattern recognition completed!")
-                        st.json(result)
+                        st.markdown("### 📊 Pattern Analysis Results")
+                        
+                        # Overview Metrics
+                        pattern_col1, pattern_col2, pattern_col3 = st.columns(3)
+                        
+                        with pattern_col1:
+                            st.metric("Patterns Identified", "15")
+                            
+                        with pattern_col2:
+                            confidence = 85
+                            st.metric("Confidence Threshold", f"{confidence}%")
+                            st.progress(confidence / 100)
+                            
+                        with pattern_col3:
+                            st.metric("Actionable Insights", "8 recommendations")
+                        
+                        # Key Discoveries
+                        st.markdown("#### 🔬 Key Scientific Discoveries")
+                        discoveries = [
+                            "⚖️ Molecular weight correlation with efficacy identified",
+                            "🧠 Hydrophobicity predicts brain penetration capability",
+                            "💔 Specific scaffold linked to cardiotoxicity risk"
+                        ]
+                        
+                        for discovery in discoveries:
+                            st.write(f"• {discovery}")
+                        
+                        # Model Performance
+                        st.markdown("#### 🤖 Predictive Model Results")
+                        
+                        model_col1, model_col2 = st.columns(2)
+                        
+                        with model_col1:
+                            st.metric("New Models Generated", "3")
+                            st.metric("Validation Accuracy", "92.4%")
+                            
+                        with model_col2:
+                            st.success("✅ Cross-dataset validation: Successful")
+                            st.info("Models ready for deployment")
+                        
+                        # Recommendations
+                        st.markdown("#### 💡 AI-Generated Insights")
+                        st.write("• Focus molecular modifications on weight optimization")
+                        st.write("• Prioritize lipophilic compounds for CNS targets")
+                        st.write("• Screen against cardiotoxicity for identified scaffolds")
                 
                 st.markdown("**🎯 Prediction Ensemble Agent**")
                 st.write("Optimizes accuracy through model combination")
@@ -1621,23 +1652,50 @@ def main():
                 
                 if st.button("🎯 Optimize Ensemble", key="optimize_ensemble"):
                     with st.spinner("Optimizing model ensemble..."):
-                        result = {
-                            "ensemble_accuracy": "94.7%",
-                            "individual_accuracies": {
-                                "Random Forest": "89.2%",
-                                "Neural Networks": "91.5%",
-                                "SVM": "87.8%",
-                                "Gradient Boosting": "90.3%"
-                            },
-                            "optimal_weights": "Calculated",
-                            "cross_validation_score": "93.1%",
-                            "improvement_over_best": "+3.2%",
-                            "confidence_intervals": "Narrow",
-                            "deployment_ready": True
-                        }
+                        st.success("🎯 Ensemble Optimization Complete!")
                         
-                        st.success("Ensemble optimization completed!")
-                        st.json(result)
+                        st.markdown("### 📊 Model Performance Summary")
+                        
+                        # Overall Performance
+                        ensemble_accuracy = 94.7
+                        st.progress(ensemble_accuracy / 100)
+                        st.metric("Ensemble Accuracy", f"{ensemble_accuracy}%", delta="+3.2%")
+                        
+                        # Individual Model Performance
+                        st.markdown("#### 🤖 Individual Model Accuracies")
+                        
+                        model_data = [
+                            ["Neural Networks", 91.5, "🧠"],
+                            ["Gradient Boosting", 90.3, "📈"],
+                            ["Random Forest", 89.2, "🌳"],
+                            ["SVM", 87.8, "📐"]
+                        ]
+                        
+                        for model_name, accuracy, icon in model_data:
+                            col1, col2, col3 = st.columns([2, 1, 1])
+                            with col1:
+                                st.write(f"{icon} **{model_name}**")
+                            with col2:
+                                st.metric("Accuracy", f"{accuracy}%")
+                            with col3:
+                                st.progress(accuracy / 100)
+                        
+                        # Cross-validation Results
+                        st.markdown("#### ✅ Validation Results")
+                        
+                        val_col1, val_col2 = st.columns(2)
+                        
+                        with val_col1:
+                            st.metric("Cross-validation Score", "93.1%")
+                            st.success("✅ Optimal weights calculated")
+                            
+                        with val_col2:
+                            st.metric("Confidence Intervals", "Narrow")
+                            st.success("✅ Deployment ready")
+                        
+                        # Summary
+                        st.markdown("#### 📈 Performance Summary")
+                        st.info("Ensemble model shows significant improvement over individual models with robust validation metrics.")
             
             with col2:
                 st.markdown("**🧬 Biomarker Discovery Agent**")
@@ -1652,24 +1710,54 @@ def main():
                 
                 if st.button("🔬 Discover Biomarkers", key="discover_biomarkers"):
                     with st.spinner("Analyzing biological data for biomarkers..."):
-                        result = {
-                            "biomarkers_identified": 23,
-                            "high_confidence": 8,
-                            "novel_targets": 5,
-                            "validation_datasets": "12 cohorts",
-                            "statistical_significance": "p < 0.001",
-                            "clinical_relevance": "High",
-                            "druggability_score": "7.8/10",
-                            "patent_landscape": "Clear",
-                            "next_steps": [
-                                "In vitro validation",
-                                "Animal model testing",
-                                "Biomarker assay development"
-                            ]
-                        }
+                        st.success("🧬 Biomarker Discovery Complete!")
                         
-                        st.success("Biomarker discovery completed!")
-                        st.json(result)
+                        st.markdown("### 📊 Discovery Results Summary")
+                        
+                        # Key Metrics
+                        bio_col1, bio_col2, bio_col3 = st.columns(3)
+                        
+                        with bio_col1:
+                            st.metric("Biomarkers Identified", "23")
+                            
+                        with bio_col2:
+                            st.metric("High Confidence", "8", help="Strong statistical evidence")
+                            
+                        with bio_col3:
+                            st.metric("Novel Targets", "5", help="Previously unknown targets")
+                        
+                        # Statistical Analysis
+                        st.markdown("#### 📈 Statistical Validation")
+                        
+                        stat_col1, stat_col2 = st.columns(2)
+                        
+                        with stat_col1:
+                            st.metric("Validation Datasets", "12 cohorts")
+                            st.success("Statistical significance: p < 0.001")
+                            
+                        with stat_col2:
+                            druggability = 7.8
+                            st.metric("Druggability Score", f"{druggability}/10")
+                            st.progress(druggability / 10)
+                        
+                        # Clinical Assessment
+                        st.markdown("#### 🏥 Clinical Relevance")
+                        st.success("Clinical Relevance: High")
+                        st.info("Patent landscape: Clear - minimal IP conflicts identified")
+                        
+                        # Next Steps
+                        st.markdown("#### 📋 Recommended Next Steps")
+                        next_steps = [
+                            "🧪 In vitro validation studies",
+                            "🐭 Animal model testing protocols",
+                            "⚗️ Biomarker assay development"
+                        ]
+                        
+                        for step in next_steps:
+                            st.write(f"• {step}")
+                        
+                        st.markdown("#### 📈 Development Priority")
+                        st.info("Focus on high-confidence biomarkers with clear druggability for fastest clinical translation.")
         
         with tab5:
             st.subheader("Multi-Modal Research Capabilities")
@@ -1688,27 +1776,54 @@ def main():
                 
                 if st.button("📖 Process Document", key="process_document"):
                     with st.spinner("Processing document content..."):
-                        result = {
-                            "document_type": "Research Article",
-                            "key_findings": [
-                                "Novel mechanism identified",
-                                "Promising efficacy results",
-                                "Acceptable safety profile"
-                            ],
-                            "methodology_assessment": "Robust study design",
-                            "statistical_power": "Adequate",
-                            "clinical_implications": "Significant potential",
-                            "related_research": "47 papers identified",
-                            "citation_count": 156,
-                            "impact_score": "High",
-                            "recommendations": [
-                                "Further clinical development warranted",
-                                "Consider combination therapy"
-                            ]
-                        }
+                        st.success("📄 Document Processing Complete!")
                         
-                        st.success("Document processing completed!")
-                        st.json(result)
+                        st.markdown("### 📊 Document Analysis Summary")
+                        
+                        # Document Classification
+                        st.info("**Document Type:** Research Article")
+                        
+                        # Key Findings
+                        st.markdown("#### 🔬 Key Research Findings")
+                        findings = [
+                            "🧬 Novel mechanism of action identified",
+                            "📈 Promising efficacy results demonstrated",
+                            "✅ Acceptable safety profile confirmed"
+                        ]
+                        
+                        for finding in findings:
+                            st.write(f"• {finding}")
+                        
+                        # Study Quality Assessment
+                        st.markdown("#### 📋 Study Quality Assessment")
+                        
+                        quality_col1, quality_col2 = st.columns(2)
+                        
+                        with quality_col1:
+                            st.success("✅ Methodology: Robust study design")
+                            st.success("✅ Statistical Power: Adequate")
+                            
+                        with quality_col2:
+                            st.metric("Citation Count", "156")
+                            st.metric("Impact Score", "High")
+                        
+                        # Research Context
+                        st.markdown("#### 🔗 Research Context")
+                        st.info("Related research: 47 papers identified in systematic review")
+                        
+                        # Clinical Implications
+                        st.markdown("#### 🏥 Clinical Implications")
+                        st.success("Significant therapeutic potential identified")
+                        
+                        # Recommendations
+                        st.markdown("#### 💡 Expert Recommendations")
+                        recommendations = [
+                            "📈 Further clinical development warranted",
+                            "🤝 Consider combination therapy approaches"
+                        ]
+                        
+                        for rec in recommendations:
+                            st.write(f"• {rec}")
                 
                 st.markdown("**🎨 Visual Explanation Agent**")
                 st.write("Creates molecular interaction diagrams")
@@ -1738,31 +1853,68 @@ def main():
                 
                 if st.button("📈 Analyze Research", key="analyze_research"):
                     with st.spinner("Analyzing research landscape..."):
-                        result = {
-                            "papers_analyzed": 2847,
-                            "research_trends": [
-                                "Increasing focus on combination therapy",
-                                "Novel resistance mechanisms discovered",
-                                "Biomarker-driven approaches emerging"
-                            ],
-                            "key_authors": [
-                                "Dr. Sarah Chen", "Prof. Michael Rodriguez", 
-                                "Dr. Elena Volkova"
-                            ],
-                            "research_gaps": [
-                                "Limited pediatric studies",
-                                "Insufficient diversity in patient populations"
-                            ],
-                            "funding_trends": "Increasing investment",
-                            "collaboration_networks": "45 institution clusters",
-                            "future_directions": [
-                                "AI-driven drug design",
-                                "Personalized medicine approaches"
-                            ]
-                        }
+                        st.success("📊 Research Analysis Complete!")
                         
-                        st.success("Research analysis completed!")
-                        st.json(result)
+                        st.markdown("### 📚 Literature Analysis Results")
+                        
+                        # Analysis Overview
+                        st.metric("Papers Analyzed", "2,847", help="Comprehensive literature review")
+                        
+                        # Research Trends
+                        st.markdown("#### 📈 Emerging Research Trends")
+                        trends = [
+                            "🤝 Increasing focus on combination therapy approaches",
+                            "🔬 Novel resistance mechanisms being discovered",
+                            "🎯 Biomarker-driven therapeutic approaches emerging"
+                        ]
+                        
+                        for trend in trends:
+                            st.write(f"• {trend}")
+                        
+                        # Key Researchers
+                        st.markdown("#### 👥 Leading Researchers")
+                        
+                        author_col1, author_col2, author_col3 = st.columns(3)
+                        
+                        with author_col1:
+                            st.info("**Dr. Sarah Chen**\nLeading expert in resistance")
+                            
+                        with author_col2:
+                            st.info("**Prof. Michael Rodriguez**\nCombination therapy pioneer")
+                            
+                        with author_col3:
+                            st.info("**Dr. Elena Volkova**\nBiomarker discovery specialist")
+                        
+                        # Research Gaps
+                        st.markdown("#### ⚠️ Identified Research Gaps")
+                        gaps = [
+                            "👶 Limited pediatric population studies",
+                            "🌍 Insufficient diversity in patient populations"
+                        ]
+                        
+                        for gap in gaps:
+                            st.write(f"• {gap}")
+                        
+                        # Funding and Collaboration
+                        st.markdown("#### 💰 Research Environment")
+                        
+                        funding_col1, funding_col2 = st.columns(2)
+                        
+                        with funding_col1:
+                            st.metric("Funding Trend", "Increasing investment")
+                            
+                        with funding_col2:
+                            st.metric("Collaboration Networks", "45 institution clusters")
+                        
+                        # Future Directions
+                        st.markdown("#### 🔮 Future Research Directions")
+                        directions = [
+                            "🤖 AI-driven drug design methodologies",
+                            "🧬 Personalized medicine approaches"
+                        ]
+                        
+                        for direction in directions:
+                            st.write(f"• {direction}")
         
         with tab6:
             st.subheader("Advanced Decision Support System")
