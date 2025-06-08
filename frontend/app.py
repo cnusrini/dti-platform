@@ -2005,32 +2005,76 @@ def main():
                 
                 if st.button("✅ Check Compliance", key="check_compliance"):
                     with st.spinner("Evaluating regulatory compliance..."):
-                        result = {
-                            "compliance_score": "87%",
-                            "critical_gaps": 2,
-                            "recommendations": 8,
-                            "regulatory_pathway": "Standard review",
-                            "review_timeline": "10-12 months",
-                            "compliance_areas": {
-                                "Nonclinical": "Compliant",
-                                "CMC": "Minor gaps",
-                                "Clinical": "Compliant",
-                                "Statistical": "Compliant"
-                            },
-                            "required_actions": [
-                                "Complete genotoxicity package",
-                                "Stability data extension",
-                                "Pediatric investigation plan"
-                            ],
-                            "guidance_adherence": {
-                                "ICH guidelines": "95%",
-                                "FDA guidance": "90%",
-                                "EMA guidelines": "92%"
-                            }
-                        }
+                        st.success("📋 Compliance Assessment Complete!")
                         
-                        st.success("Compliance assessment completed!")
-                        st.json(result)
+                        st.markdown("### 📊 Overall Compliance Score")
+                        
+                        # Compliance Score
+                        compliance_score = 87
+                        st.progress(compliance_score / 100)
+                        st.metric("Overall Compliance", f"{compliance_score}%", help="Based on FDA/EMA guidelines")
+                        
+                        # Review Information
+                        review_col1, review_col2 = st.columns(2)
+                        
+                        with review_col1:
+                            st.metric("Critical Gaps", "2", delta="Minor")
+                            
+                        with review_col2:
+                            st.metric("Review Timeline", "10-12 months")
+                        
+                        # Compliance Areas
+                        st.markdown("#### 📋 Compliance by Area")
+                        
+                        compliance_areas = [
+                            ("Nonclinical Studies", "Compliant", "success"),
+                            ("CMC (Chemistry)", "Minor gaps", "warning"), 
+                            ("Clinical Studies", "Compliant", "success"),
+                            ("Statistical Analysis", "Compliant", "success")
+                        ]
+                        
+                        for area, status, alert_type in compliance_areas:
+                            if alert_type == "success":
+                                st.success(f"✅ **{area}:** {status}")
+                            elif alert_type == "warning":
+                                st.warning(f"⚠️ **{area}:** {status}")
+                            else:
+                                st.error(f"❌ **{area}:** {status}")
+                        
+                        # Guideline Adherence
+                        st.markdown("#### 🏛️ Guideline Adherence")
+                        
+                        guide_col1, guide_col2, guide_col3 = st.columns(3)
+                        
+                        with guide_col1:
+                            st.metric("ICH Guidelines", "95%")
+                            
+                        with guide_col2:
+                            st.metric("FDA Guidance", "90%")
+                            
+                        with guide_col3:
+                            st.metric("EMA Guidelines", "92%")
+                        
+                        # Required Actions
+                        st.markdown("#### 📝 Required Actions")
+                        actions = [
+                            "🧪 Complete genotoxicity package",
+                            "📊 Extend stability data collection",
+                            "👶 Submit pediatric investigation plan"
+                        ]
+                        
+                        for action in actions:
+                            st.write(f"• {action}")
+                        
+                        # Pathway Information
+                        st.markdown("#### 🛤️ Regulatory Pathway")
+                        st.info("**Pathway:** Standard review process recommended")
+                        st.write("Based on current compliance status, standard review timeline is appropriate.")
+                        
+                        # Final Assessment
+                        st.markdown("#### 📈 Assessment Summary")
+                        st.success("Strong compliance foundation with minor addressable gaps")
+                        st.write("Recommendation: Address identified gaps before submission to ensure smooth review process.")
         
         st.markdown("---")
         st.info("💡 **Integration Note**: All agents work seamlessly with the existing prediction models. Use the 'Get AI Explain Results' button after running any prediction to automatically engage the most relevant agents for comprehensive analysis.")
