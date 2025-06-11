@@ -20,6 +20,18 @@ from utils.model_preloader import ModelPreloader
 from config.model_registry import MODEL_REGISTRY
 from agents.agent_manager import agent_manager
 
+# Add auth system to path
+auth_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(auth_path)
+
+try:
+    from auth.user_management import UserManager, SubscriptionPlans
+    from auth.landing_page import check_feature_access, render_access_denied
+except ImportError:
+    # Fallback if auth system not available
+    def check_feature_access(feature): return True
+    def render_access_denied(feature, plan): pass
+
 # Page configuration
 st.set_page_config(
     page_title="PharmQAgentAI",
