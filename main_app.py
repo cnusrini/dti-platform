@@ -113,6 +113,10 @@ def render_prediction_interface(user_plan: str):
     if user_plan in ["Professional", "Enterprise"]:
         available_tasks.extend(["DDI Prediction", "AI Agent Analysis"])
     
+    # Add admin features for Enterprise users
+    if user_plan == "Enterprise":
+        available_tasks.append("Website Integration")
+    
     selected_task = st.sidebar.selectbox("Choose Analysis Type", available_tasks)
     
     # Main content area
