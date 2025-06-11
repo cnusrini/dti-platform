@@ -50,6 +50,19 @@ class ModelPreloader:
         """Get current preload status"""
         return self.preload_status.copy()
     
+    def get_preloaded_models(self) -> Dict[str, Any]:
+        """Get all preloaded models with their information"""
+        preloaded = {}
+        for model_key, status in self.preload_status.items():
+            if status:
+                task, model_name = model_key.split('_', 1)
+                preloaded[model_key] = {
+                    "task": task,
+                    "model_name": model_name,
+                    "status": "loaded"
+                }
+        return preloaded
+    
     def is_preloaded(self, task: str, model_name: str) -> bool:
         """Check if a specific model is preloaded"""
         model_key = f"{task}_{model_name}"
