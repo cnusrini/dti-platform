@@ -29,13 +29,18 @@ auth_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(auth_path)
 
 try:
-    from auth.database_config import DatabaseConfig
+    from auth.external_db_connector import ExternalDBUserManager
     from auth.user_management import SubscriptionPlans
     from auth.landing_page import check_feature_access, render_access_denied
+    
+    # Initialize database manager
+    db_manager = ExternalDBUserManager()
+    AUTHENTICATION_ENABLED = True
 except ImportError:
     # Fallback if auth system not available
     def check_feature_access(feature): return True
     def render_access_denied(feature, plan): pass
+    AUTHENTICATION_ENABLED = False
 
 # Page configuration
 st.set_page_config(
@@ -1155,8 +1160,171 @@ def render_ai_analysis_section():
             st.session_state.cached_prediction_display = None
             st.rerun()
 
+def render_login_interface():
+    """Render login interface matching EmedChainHub design"""
+    import hashlib
+    
+    # Custom CSS for login interface
+    st.markdown("""
+    <style>
+    .login-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        border: 1px solid #e2e8f0;
+    }
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .brand-title {
+        font-size: 2.5rem;
+        color: #4F46E5;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .brand-subtitle {
+        color: #6B7280;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+    .welcome-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 0.5rem;
+    }
+    .welcome-subtitle {
+        color: #6B7280;
+        margin-bottom: 2rem;
+    }
+    .demo-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+    .demo-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1e40af;
+        margin-bottom: 1rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Main login container
+    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    
+    # Brand header
+    st.markdown('''
+    <div class="login-header">
+        <div class="brand-title">🧬 PharmQAgentAI</div>
+        <div class="brand-subtitle">Sign in to your AI drug discovery platform</div>
+        <div class="welcome-title">Welcome back</div>
+        <div class="welcome-subtitle">Enter your credentials to access your account</div>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    # Show authentication status
+    if AUTHENTICATION_ENABLED:
+        st.success("Connected to Neon PostgreSQL Database")
+    else:
+        st.warning("Database authentication disabled - Demo mode")
+    
+    # Login form
+    with st.form("login_form", clear_on_submit=False):
+        email = st.text_input("Email", placeholder="Enter your email")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            login_btn = st.form_submit_button("Sign in", type="primary", use_container_width=True)
+        with col2:
+            demo_btn = st.form_submit_button("Use Demo", use_container_width=True)
+        
+        if login_btn and AUTHENTICATION_ENABLED:
+            if email and password:
+                try:
+                    # Hash password
+                    password_hash = hashlib.sha256(password.encode()).hexdigest()
+                    
+                    # Authenticate user
+                    user_data = db_manager.authenticate_user(email, password)
+                    
+                    if user_data:
+                        st.session_state.authenticated = True
+                        st.session_state.user_data = user_data
+                        st.success("Login successful!")
+                        st.rerun()
+                    else:
+                        st.error("Invalid email or password. Please check your credentials and try again.")
+                        
+                except Exception as e:
+                    st.error("Authentication service unavailable. Please try again later.")
+            else:
+                st.error("Please enter both email and password")
+        
+        if demo_btn or not AUTHENTICATION_ENABLED:
+            # Use demo credentials
+            st.session_state.authenticated = True
+            st.session_state.user_data = {
+                'id': 1,
+                'email': 'demo@pharmqagent.ai',
+                'full_name': 'Demo User',
+                'organization': 'PharmQAgentAI Demo'
+            }
+            st.success("Demo mode activated!")
+            st.rerun()
+    
+    # Demo credentials box
+    st.markdown('''
+    <div class="demo-box">
+        <div class="demo-title">Demo Account</div>
+        <div>Try the platform with these demo credentials:</div>
+        <br>
+        <strong>Email:</strong> admin@pharmqagent.ai<br>
+        <strong>Password:</strong> admin123
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
 def main():
     """Main application function"""
+    # Initialize authentication session state
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+    
+    if 'user_data' not in st.session_state:
+        st.session_state.user_data = None
+    
+    # Check authentication
+    if not st.session_state.authenticated:
+        render_login_interface()
+        return
+    
+    # Show authenticated app
+    # User info in sidebar
+    with st.sidebar:
+        st.markdown("### 👤 User Information")
+        user_data = st.session_state.user_data
+        st.write(f"**Name:** {user_data.get('full_name', 'N/A')}")
+        st.write(f"**Email:** {user_data.get('email', 'N/A')}")
+        if user_data.get('organization'):
+            st.write(f"**Organization:** {user_data.get('organization')}")
+        
+        if st.button("🚪 Logout", key="logout_btn"):
+            st.session_state.authenticated = False
+            st.session_state.user_data = None
+            st.rerun()
+        
+        st.markdown("---")
+    
     render_top_bar()
     render_sidebar()
     

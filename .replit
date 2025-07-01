@@ -22,7 +22,7 @@ args = "PharmQAgentAI Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "PharmQAgentAI with Login"
+args = "Simple Login App"
 
 [[workflows.workflow]]
 name = "PharmQAgentAI Server"
@@ -34,13 +34,13 @@ args = "streamlit run frontend/app.py --server.port 5000"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "PharmQAgentAI with Login"
+name = "Simple Login App"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "streamlit run pharmq_main_app.py --server.port 5001"
-waitForPort = 5001
+args = "streamlit run simple_login_app.py --server.port 5002"
+waitForPort = 5002
 
 [[ports]]
 localPort = 5000
@@ -49,3 +49,7 @@ externalPort = 80
 [[ports]]
 localPort = 5001
 externalPort = 3000
+
+[[ports]]
+localPort = 5002
+externalPort = 3001
