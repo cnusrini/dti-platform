@@ -25,7 +25,8 @@ auth_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(auth_path)
 
 try:
-    from auth.user_management import UserManager, SubscriptionPlans
+    from auth.database_config import DatabaseConfig
+    from auth.user_management import SubscriptionPlans
     from auth.landing_page import check_feature_access, render_access_denied
 except ImportError:
     # Fallback if auth system not available

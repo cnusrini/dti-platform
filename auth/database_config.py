@@ -9,18 +9,18 @@ from typing import Union
 
 # Import both user management systems
 from auth.user_management import UserManager as SQLiteUserManager
-from auth.postgresql_user_management import PostgreSQLUserManager
+from auth.external_db_connector import ExternalDBUserManager
 
 class DatabaseConfig:
     """Handles database configuration and user manager selection"""
     
     @staticmethod
-    def get_user_manager() -> Union[SQLiteUserManager, PostgreSQLUserManager]:
+    def get_user_manager() -> Union[SQLiteUserManager, ExternalDBUserManager]:
         """
         Get the appropriate user manager based on configuration
         
         Priority:
-        1. If DATABASE_URL is set, use PostgreSQL
+        1. If DATABASE_URL is set, use External PostgreSQL
         2. Otherwise, use SQLite
         """
         database_url = os.getenv('DATABASE_URL')
@@ -28,12 +28,9 @@ class DatabaseConfig:
         if database_url:
             try:
                 # Test PostgreSQL connection
-                pg_manager = PostgreSQLUserManager(database_url)
-                if pg_manager.test_connection():
-                    st.success("✅ Connected to PostgreSQL database (emdcian_website)")
-                    return pg_manager
-                else:
-                    st.warning("⚠️ PostgreSQL connection failed, falling back to SQLite")
+                pg_manager = ExternalDBUserManager(database_url)
+                st.success("✅ Connected to PostgreSQL database (emdcian_website)")
+                return pg_manager
             except Exception as e:
                 st.error(f"❌ PostgreSQL setup failed: {e}")
                 st.info("📝 Falling back to SQLite")
