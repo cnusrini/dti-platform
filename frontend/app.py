@@ -365,10 +365,10 @@ def render_top_bar():
                     <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.1rem;">Status</div>
                     <div style="color: {}; font-size: 1rem; font-weight: 600; line-height: 1;">{}</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.6rem 1rem; text-align: center; min-width: 120px;">
-                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.1rem;">👤 Logged in as</div>
-                    <div style="color: #ffffff; font-size: 1rem; font-weight: 600; line-height: 1;">{}</div>
-                    <div style="color: #cbd5e1; font-size: 0.7rem; font-weight: 400; line-height: 1; margin-top: 0.1rem; opacity: 0.8;">{}</div>
+                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%); border: 2px solid rgba(255,255,255,0.25); border-radius: 12px; padding: 0.8rem 1.2rem; text-align: center; min-width: 140px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.5px;">👤 Logged in as</div>
+                    <div style="color: #ffffff; font-size: 1.1rem; font-weight: 700; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">{}</div>
+                    <div style="color: #cbd5e1; font-size: 0.7rem; font-weight: 400; line-height: 1; margin-top: 0.3rem; opacity: 0.9; font-style: italic;">{}</div>
                 </div>
             </div>
         </div>

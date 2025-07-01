@@ -1,6 +1,6 @@
 # PharmQAgentAI: Therapeutic Intelligence Platform
 
-A comprehensive AI-driven platform for drug discovery and therapeutics prediction, featuring 20 transformer models from verified Hugging Face repositories with complete backend/frontend separation.
+A comprehensive AI-driven platform for drug discovery and therapeutics prediction, featuring advanced authentication, 24 specialized AI agents, 20 transformer models, and professional user interface designed for pharmaceutical research.
 
 ## 🏗️ Architecture Overview
 
@@ -47,7 +47,21 @@ PharmQAgentAI/
 
 ## 🚀 Key Features
 
-### Transformer Models (20 Total)
+### 🔐 Professional Authentication System
+- **PostgreSQL Integration** - Secure database authentication with Neon/Render PostgreSQL
+- **EmedChainHub-Style Interface** - Professional login design matching pharmaceutical industry standards
+- **User Management** - Registration, login, session management with encrypted passwords
+- **Conventional UX** - User information displayed in top-right header following standard patterns
+- **Demo Mode** - Quick access for testing and demonstration purposes
+
+### 🤖 Advanced AI Agent System (24 Agents)
+- **6 Agent Categories** - Workflow Automation, Collaborative Research, Real-Time Intelligence, Advanced Analytics, Multi-Modal Research, Decision Support
+- **Google AI Integration** - Powered by Google Gemini and generative AI technologies
+- **Specialized Research Agents** - Domain-specific agents for pharmaceutical research workflows
+- **Real-Time Analysis** - Instant AI-powered insights and recommendations
+- **Multi-Modal Capabilities** - Text, molecular, and data analysis integration
+
+### 🧬 Transformer Models (20 Total)
 - **SciBERT-DTI** - Scientific literature predictions
 - **PubMedBERT-DTI** - Biomedical research applications
 - **ChemBERTa-DTI** - Chemical structure analysis
@@ -114,32 +128,53 @@ Sophisticated multi-agent system that coordinates specialized AI agents for comp
 
 ## 🛠️ Installation & Setup
 
-### Backend Setup
+### Local Development
 ```bash
-cd backend
+# Clone repository
+git clone https://github.com/yourusername/pharmqagentai.git
+cd pharmqagentai
+
+# Install dependencies
 pip install -r requirements.txt
-python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
-```
 
-### Frontend Setup
-```bash
+# Set environment variables
+export DATABASE_URL="your_postgresql_connection_string"
+export HUGGINGFACE_TOKEN="your_huggingface_token"
+export GOOGLE_AI_API_KEY="your_google_ai_key"
+
+# Run application
 streamlit run frontend/app.py --server.port 5000
 ```
 
-### Unified Application
+### Quick Start with Demo
 ```bash
+# Run with demo authentication (no database required)
 streamlit run frontend/app.py --server.port 5000
+# Click "Use Demo" button to bypass authentication
 ```
 
 ## 🔧 Configuration
 
-### Environment Variables
-- `HUGGINGFACE_TOKEN` - Your Hugging Face authentication token
-- `GOOGLE_AI_API_KEY` - Google AI API key for Gemini-1.5-flash model access
-- `API_BASE_URL` - Backend API endpoint (default: http://localhost:8000)
+### Required Environment Variables
+- `DATABASE_URL` - PostgreSQL connection string (e.g., `postgresql://user:pass@host:port/db`)
+- `HUGGINGFACE_TOKEN` - Your Hugging Face authentication token for model access
+- `GOOGLE_AI_API_KEY` - Google AI API key for advanced agent features (optional)
 
-**Required for AI Features:**
-The Intelligent Drug Discovery Assistant and Multi-Agent Research Orchestration require a valid Google AI API key. Obtain your key from [Google AI Studio](https://makersuite.google.com/app/apikey) and set it as an environment variable.
+### Database Setup
+PharmQAgentAI uses PostgreSQL for user authentication and session management:
+
+**For Local Development:**
+- Use Neon, Supabase, or local PostgreSQL instance
+- Set DATABASE_URL environment variable
+
+**For Production Deployment:**
+- Render PostgreSQL (recommended)
+- Any PostgreSQL-compatible database service
+
+The application automatically creates required tables on first run:
+- `pharmq_users` - User accounts and authentication
+- `pharmq_subscriptions` - User subscription management  
+- `pharmq_usage_tracking` - Feature usage analytics
 
 ### Streamlit Configuration (.streamlit/config.toml)
 ```toml
@@ -228,27 +263,48 @@ Each model includes authentic performance data:
 
 ## 🚀 Deployment
 
-The platform is designed for deployment on Replit with automatic scaling and health monitoring. The backend/frontend separation allows for independent scaling and maintenance.
+### Render Deployment (Recommended)
 
-### Production Setup
-1. **Configure Environment Variables**
-   - `HUGGINGFACE_TOKEN` - For model access
-   - `GOOGLE_AI_API_KEY` - For AI agent functionality
-2. **Start FastAPI backend service** (if using separated architecture)
-3. **Launch Streamlit frontend**
-4. **Configure load balancing** if needed
+PharmQAgentAI is optimized for Render deployment with PostgreSQL integration.
 
-### Render Deployment
-For Render deployment, use these settings:
-- **Build Command:** `pip install -r requirements.txt`
-- **Start Command:** `streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true`
-- **Environment Variables:** Set `GOOGLE_AI_API_KEY` and `HUGGINGFACE_TOKEN` in Render dashboard
+**Quick Steps:**
+1. **Create PostgreSQL Database** on Render
+2. **Create Web Service** connected to your GitHub repository
+3. **Configure Environment Variables**
+4. **Deploy**
 
-### AI Features Requirements
-The Intelligent Drug Discovery Assistant and Multi-Agent Research Orchestration require:
-- Valid Google AI API key for Gemini-1.5-flash access
-- Internet connectivity for real-time AI processing
-- Sufficient memory allocation for concurrent agent operations
+**Render Configuration:**
+```bash
+# Build Command
+pip install -r requirements.txt
+
+# Start Command  
+streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0
+
+# Environment Variables
+DATABASE_URL=postgresql://user:pass@host:port/database
+HUGGINGFACE_TOKEN=your_huggingface_token
+GOOGLE_AI_API_KEY=your_google_ai_key
+```
+
+**Detailed Deployment Guide:** See `RENDER_DEPLOYMENT_GUIDE.md` for complete instructions.
+
+### Other Deployment Options
+
+**Streamlit Cloud:**
+- Connect GitHub repository
+- Add secrets: `DATABASE_URL`, `HUGGINGFACE_TOKEN`, `GOOGLE_AI_API_KEY`
+- Deploy directly from `frontend/app.py`
+
+**Docker/Heroku:**
+- Use provided `Procfile` and `runtime.txt`
+- Configure PostgreSQL add-on
+- Set environment variables
+
+### Requirements
+- PostgreSQL database (Render, Neon, Supabase, etc.)
+- Hugging Face account with API token
+- Google AI API key (optional, for advanced features)
 
 ## 🤝 Contributing
 
