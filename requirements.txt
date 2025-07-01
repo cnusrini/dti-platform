@@ -15,3 +15,6 @@ google-generativeai
 google-adk
 anthropic
 trafilatura
+plotly
+psycopg2-binary
+sqlalchemy
