@@ -340,7 +340,15 @@ if 'preserve_prediction_results' not in st.session_state:
     st.session_state.preserve_prediction_results = False
 
 def render_top_bar():
-    """Render the top navigation bar"""
+    """Render the top navigation bar with user info"""
+    # Get user data for display
+    user_data = st.session_state.get('user_data', {})
+    user_name = user_data.get('full_name', 'User')
+    user_email = user_data.get('email', '')
+    
+    # Extract first name for display
+    first_name = user_name.split(' ')[0] if user_name else 'User'
+    
     st.markdown("""
     <div class="main-header">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
@@ -357,13 +365,20 @@ def render_top_bar():
                     <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.1rem;">Status</div>
                     <div style="color: {}; font-size: 1rem; font-weight: 600; line-height: 1;">{}</div>
                 </div>
+                <div style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.6rem 1rem; text-align: center; min-width: 120px;">
+                    <div style="color: #e2e8f0; font-weight: 600; font-size: 0.75rem; font-family: 'Inter', sans-serif; margin-bottom: 0.1rem;">👤 Logged in as</div>
+                    <div style="color: #ffffff; font-size: 1rem; font-weight: 600; line-height: 1;">{}</div>
+                    <div style="color: #cbd5e1; font-size: 0.7rem; font-weight: 400; line-height: 1; margin-top: 0.1rem; opacity: 0.8;">{}</div>
+                </div>
             </div>
         </div>
     </div>
     """.format(
         len(st.session_state.model_manager.get_loaded_models()) if st.session_state.model_manager else 0,
         "#10b981" if st.session_state.loaded_models else "#f59e0b",
-        "Ready" if st.session_state.loaded_models else "Standby"
+        "Ready" if st.session_state.loaded_models else "Standby",
+        first_name,
+        user_email[:25] + "..." if len(user_email) > 25 else user_email
     ), unsafe_allow_html=True)
 
 def render_sidebar():
@@ -1309,16 +1324,9 @@ def main():
         return
     
     # Show authenticated app
-    # User info in sidebar
+    # Logout button in sidebar 
     with st.sidebar:
-        st.markdown("### 👤 User Information")
-        user_data = st.session_state.user_data
-        st.write(f"**Name:** {user_data.get('full_name', 'N/A')}")
-        st.write(f"**Email:** {user_data.get('email', 'N/A')}")
-        if user_data.get('organization'):
-            st.write(f"**Organization:** {user_data.get('organization')}")
-        
-        if st.button("🚪 Logout", key="logout_btn"):
+        if st.button("🚪 Logout", key="logout_btn", use_container_width=True):
             st.session_state.authenticated = False
             st.session_state.user_data = None
             st.rerun()
